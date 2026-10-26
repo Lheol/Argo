@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Permissão para exibir o semáforo compacto sobre o app da Uber / 99 / inDrive -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Permite pedir ao usuário a isenção de otimização de bateria (estabilidade em segundo plano) -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Visibilidade de pacotes estritamente limitada aos 3 apps de corrida suportados (sem QUERY_ALL_PACKAGES) -->
+    <queries>
+        <package android:name="com.ubercab.driver" />
+        <package android:name="com.app99.driver" />
+        <package android:name="sinet.startup.inDriver" />
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppUuber">
+
+        <!-- Activity Principal com Splash Screen Transparente de Alta Performance -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:theme="@style/Theme.AppUuber.Splash"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Serviço de Acessibilidade que lê os cards de chamada em tempo real com escopo fechado -->
+        <service
+            android:name=".service.UberAccessibilityService"
+            android:enabled="true"
+            android:exported="false"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+    </application>
+
+</manifest>

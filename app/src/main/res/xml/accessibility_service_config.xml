@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ESCOPO ESTRITO (princípio do menor privilégio):
+    O sistema Android só entrega eventos dos pacotes listados em android:packageNames.
+    Nenhum outro app (bancos, mensageiros, etc.) é observado pelo serviço.
+      - com.ubercab.driver        : Uber Driver
+      - com.app99.driver          : 99 Motorista
+    Somente leitura: sem canPerformGestures, sem canTakeScreenshot, sem cliques automáticos.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:packageNames="com.ubercab.driver,com.app99.driver,sinet.startup.inDriver"
+    android:accessibilityEventTypes="typeWindowContentChanged|typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagIncludeNotImportantViews|flagReportViewIds"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_service_description"
+    android:notificationTimeout="80" />

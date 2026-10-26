@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cor de fundo ultra-profunda consistente com Dark Mode nativo -->
+    <item android:drawable="@color/splash_background" />
+
+    <!-- Símbolo de Entrada Centralizado e Vetorial -->
+    <item
+        android:width="120dp"
+        android:height="120dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>

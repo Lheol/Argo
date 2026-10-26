@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#b91c1c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="./manifest.json" />
+  <title>Fiat Argo 2024/25 Vermelho • Cockpit REA & Google Planilhas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #05070e;
+      --bg-glass: rgba(15, 23, 42, 0.75);
+      --bg-input: rgba(6, 9, 18, 0.9);
+      --border-subtle: rgba(255, 255, 255, 0.09);
+      --border-red: rgba(239, 68, 68, 0.45);
+      --text-main: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --rosso: #e11d48;
+      --rosso-bright: #ef4444;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --sky: #38bdf8;
+      --royal: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 12% 8%, rgba(225, 29, 72, 0.25) 0%, transparent 38%),
+        radial-gradient(circle at 88% 14%, rgba(59, 130, 246, 0.14) 0%, transparent 40%),
+        radial-gradient(circle at 50% 95%, rgba(16, 185, 129, 0.08) 0%, transparent 45%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 80px;
+      overflow-x: hidden;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    /* =====================================================================
+       TELA DE LOGIN PROTEGIDA PELA ABA `Usuarios` DA PLANILHA
+       ===================================================================== */
+    #loginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(220, 38, 38, 0.34) 0%, rgba(5, 7, 14, 0.97) 62%),
+        #05070e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 445px;
+      background: linear-gradient(165deg, rgba(32, 12, 22, 0.92) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: 28px;
+      padding: 28px 24px;
+      box-shadow:
+        0 25px 60px -15px rgba(0, 0, 0, 0.85),
+        0 0 40px rgba(225, 29, 72, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      text-align: center;
+      animation: floatUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-car-showcase {
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 14px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 28px rgba(239, 68, 68, 0.45);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+      font-size: 0.71rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .login-card h1 {
+      font-size: 1.48rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .login-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 13px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.77rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .input-with-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-icon input {
+      width: 100%;
+      background: rgba(6, 9, 18, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 13px;
+      padding: 12px 40px 12px 14px;
+      color: #fff;
+      font-size: 0.94rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-with-icon input:focus {
+      border-color: var(--rosso-bright);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+
+    .eye-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.79rem;
+      color: var(--text-secondary);
+      margin: 8px 0 16px;
+    }
+
+    .login-error-box {
+      display: none;
+      background: rgba(239, 68, 68, 0.16);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fecaca;
+      font-size: 0.8rem;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .btn-glossy {
+      width: 100%;
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.55);
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-glossy:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-glossy:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .btn-glossy.blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-glossy.emerald {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.45);
+    }
+
+    .login-sheet-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* =====================================================================
+       LAYOUT PRINCIPAL DO COCKPIT
+       ===================================================================== */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px 14px;
+    }
+
+    .top-utility-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 10px 16px;
+      background: rgba(15, 23, 42, 0.68);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      backdrop-filter: blur(16px);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .user-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+    }
+
+    .cloud-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.77rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.14);
+      color: #6ee7b7;
+      transition: all 0.2s;
+    }
+
+    .sync-pill.pending {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.15);
+      color: #fcd34d;
+    }
+
+    .sync-pill.syncing {
+      border-color: rgba(56, 189, 248, 0.45);
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+    }
+
+    .mini-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 11px;
+      border-radius: 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.13);
+      color: #fff;
+    }
+
+    .cockpit-hero {
+      background: linear-gradient(135deg, rgba(45, 10, 20, 0.85) 0%, rgba(15, 23, 42, 0.88) 55%, rgba(25, 10, 18, 0.9) 100%);
+      border: 1px solid var(--border-red);
+      border-radius: 24px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+      box-shadow:
+        0 20px 45px -15px rgba(225, 29, 72, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .cockpit-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .argo-emblem {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #ef4444, #991b1b);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .argo-emblem span {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #fecaca;
+      margin-top: 2px;
+    }
+
+    .cockpit-title h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .color-tag {
+      background: linear-gradient(90deg, #ef4444, #b91c1c);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cockpit-title p {
+      font-size: 0.83rem;
+      color: #cbd5e1;
+      margin-top: 4px;
+    }
+
+    .cockpit-right {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .gauge-box {
+      background: rgba(6, 9, 18, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 10px 15px;
+      min-width: 140px;
+    }
+
+    .gauge-box small {
+      display: block;
+      font-size: 0.67rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .gauge-box strong {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--emerald);
+    }
+
+    .nav-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 6px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      position: sticky;
+      top: 10px;
+      z-index: 80;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .nav-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 11px 8px;
+      border-radius: 13px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(225, 29, 72, 0.45);
+    }
+
+    @media (max-width: 680px) {
+      .nav-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .cockpit-right {
+        width: 100%;
+      }
+      .gauge-box {
+        flex: 1;
+      }
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .kpi-glass {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 16px;
+      backdrop-filter: blur(16px);
+    }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .kpi-num {
+      font-size: 1.48rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .kpi-foot {
+      font-size: 0.77rem;
+      color: var(--text-secondary);
+    }
+
+    .tab-pane {
+      display: none;
+      animation: floatUp 0.2s ease;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .glass-panel {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(20px);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .panel-head h2 {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .panel-head p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .quick-money-row,
+    .parts-catalog {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .money-pill {
+      background: rgba(239, 68, 68, 0.13);
+      border: 1px solid rgba(239, 68, 68, 0.38);
+      color: #fca5a5;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .money-pill:hover {
+      background: var(--rosso-bright);
+      color: #fff;
+    }
+
+    .part-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      color: #e2e8f0;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.77rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .part-pill:hover {
+      background: var(--royal);
+      color: #fff;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 13px;
+    }
+
+    .field-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-box label {
+      font-size: 0.79rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .field-box input,
+    .field-box select {
+      background: var(--bg-input);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 12px;
+      padding: 12px 13px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .field-box input:focus {
+      border-color: var(--rosso-bright);
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 9px;
+      margin-top: 6px;
+    }
+
+    .choice-card {
+      background: var(--bg-input);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 11px 9px;
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .choice-card .icon {
+      font-size: 1.3rem;
+    }
+
+    .choice-card.active-red {
+      background: linear-gradient(145deg, rgba(239, 68, 68, 0.28), rgba(153, 27, 27, 0.38));
+      border: 1.5px solid #ef4444;
+      color: #fff;
+    }
+
+    .choice-card.active-blue {
+      background: linear-gradient(145deg, rgba(59, 130, 246, 0.28), rgba(29, 78, 216, 0.38));
+      border: 1.5px solid #60a5fa;
+      color: #fff;
+    }
+
+    .digital-readout {
+      background: linear-gradient(90deg, rgba(6, 9, 18, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-left: 4px solid var(--sky);
+      border-radius: 14px;
+      padding: 13px 16px;
+      margin: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .digital-readout .main-calc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .digital-readout .main-calc strong {
+      font-size: 1.1rem;
+      color: var(--sky);
+      margin-left: 6px;
+    }
+
+    .record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .record-card {
+      background: rgba(6, 9, 18, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 15px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .record-header {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .record-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .badge-pay {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .badge-credito {
+      background: rgba(59, 130, 246, 0.18);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .badge-debito {
+      background: rgba(16, 185, 129, 0.18);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .badge-pix {
+      background: rgba(168, 85, 247, 0.18);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+    }
+
+    .record-details {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.48;
+    }
+
+    .record-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .record-btns {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: rgba(3, 6, 14, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .step-item {
+      background: rgba(6, 9, 18, 0.78);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      background: #060912;
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+      margin: 8px 0 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .progress-seg {
+      height: 100%;
+      transition: width 0.35s ease;
+    }
+
+    .toast-popup {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 2500;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.86rem;
+      padding: 12px 18px;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =====================================================================
+       1. PORTAL DE LOGIN EXCLUSIVO (VALIDADO NA ABA `Usuarios` DA PLANILHA)
+       ===================================================================== -->
+  <div id="loginOverlay">
+    <div class="login-card">
+      <div class="login-car-showcase">
+        <svg width="52" height="52" viewBox="0 0 64 64" fill="none">
+          <path d="M10 38L16 22C17.5 18.5 20.5 17 24.5 17H39.5C43.5 17 46.5 18.5 48 22L54 38" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+          <rect x="6" y="34" width="52" height="15" rx="6" fill="#FFFFFF"/>
+          <circle cx="17" cy="49" r="5.5" fill="#0F172A" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="47" cy="49" r="5.5" fill="#0F172A" stroke="#FFFFFF" stroke-width="2.5"/>
+          <rect x="11" y="38" width="9" height="4" rx="2" fill="#EF4444"/>
+          <rect x="44" y="38" width="9" height="4" rx="2" fill="#EF4444"/>
+          <rect x="26" y="40" width="12" height="3" rx="1.5" fill="#0F172A"/>
+        </svg>
+      </div>
+      <div class="login-badge">🔒 Acesso Exclusivo via Google Planilhas</div>
+      <h1>Fiat Argo 2024/25</h1>
+      <p>Somente usuários liberados por você na aba <strong>Usuarios</strong> da sua planilha oficial podem acessar este sistema.</p>
+
+      <div id="loginErrorBox" class="login-error-box"></div>
+
+      <form onsubmit="handleLoginSubmit(event)">
+        <div class="input-group">
+          <label>📧 Seu Login ou E-mail (cadastrado na aba Usuarios)</label>
+          <div class="input-with-icon">
+            <input type="text" id="loginUser" placeholder="Digite seu e-mail ou login" required autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>🔑 Sua Senha Exclusiva</label>
+          <div class="input-with-icon">
+            <input type="password" id="loginPass" placeholder="Digite sua senha" required autocomplete="current-password" />
+            <button type="button" class="eye-btn" onclick="togglePassVisibility()">👁️</button>
+          </div>
+        </div>
+
+        <div class="login-options">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" id="loginRemember" checked />
+            Manter conectado no celular/PC
+          </label>
+          <span id="loginModeTag" style="color:#6ee7b7; font-size:0.74rem; font-weight:700;"></span>
+        </div>
+
+        <button type="submit" class="btn-glossy" id="btnLoginSubmit">
+          🚀 Entrar no Sistema do Argo
+        </button>
+      </form>
+
+      <div class="login-sheet-footer">
+        <span style="font-size:0.75rem; color:var(--text-muted);">
+          🛡️ Criptografia SHA-256 • Acesso exclusivo controlado pelo proprietário
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       2. MODAL DE CONFIGURAÇÃO DA PLANILHA OFICIAL DO USUÁRIO (PÓS-LOGIN)
+       ===================================================================== -->
+  <div id="sheetsModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2 style="font-size:1.15rem; color:#fff;">🔒 Conexão Segura Google Planilhas</h2>
+        <button class="mini-btn" onclick="closeSheetsModal()">✕ Fechar</button>
+      </div>
+      <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.45;">
+        O sistema já está conectado ao seu servidor seguro do Google Apps Script. Caso algum dia você gere uma nova URL de implantação, atualize abaixo:
+      </p>
+
+      <div class="step-item">
+        <div class="field-box" style="margin-top:4px;">
+          <label>🔗 URL do App da Web (Apps Script /exec):</label>
+          <input type="url" id="inSheetWebhookUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" />
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+        <button type="button" class="btn-glossy emerald" style="flex:1;" onclick="saveWebhookUrlConfig()">
+          💾 Salvar Conexão com Minha Planilha
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       3. MODAL PARA TROCAR A PRÓPRIA SENHA NA PLANILHA
+       ===================================================================== -->
+  <div id="accountModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width:430px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h2 style="font-size:1.12rem; color:#fff;">🔑 Alterar Minha Senha na Planilha</h2>
+        <button class="mini-btn" onclick="document.getElementById('accountModal').style.display='none'">✕</button>
+      </div>
+      <div class="field-box" style="margin-bottom:12px;">
+        <label>🔒 Senha Atual:</label>
+        <input type="password" id="cfgOldPass" placeholder="Digite sua senha atual" />
+      </div>
+      <div class="field-box" style="margin-bottom:16px;">
+        <label>✨ Nova Senha (será criptografada na planilha):</label>
+        <input type="password" id="cfgNewPass" placeholder="Digite a nova senha" />
+      </div>
+      <button type="button" class="btn-glossy" onclick="changeUserPassword()">
+        💾 Atualizar Senha com Segurança
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       4. COCKPIT PRINCIPAL DO FIAT ARGO 2024/25 VERMELHO
+       ===================================================================== -->
+  <div class="container">
+    <div class="top-utility-bar">
+      <div class="user-pill">
+        <span class="user-dot"></span>
+        <span>Acesso Autorizado: <strong id="loggedUserDisplay" style="color:#fff;">Proprietário</strong></span>
+        <button class="mini-btn" onclick="openAccountModal()">🔑 Trocar Senha</button>
+        <button class="mini-btn" onclick="logoutUser()">Sair</button>
+      </div>
+
+      <div class="cloud-actions">
+        <div id="syncStatusBadge" class="sync-pill pending" onclick="openSheetsModal()">
+          <span>☁️</span>
+          <span id="syncStatusText">Sincronizar Planilha</span>
+        </div>
+        <a href="https://docs.google.com/spreadsheets/d/1Kcr9P4MVfkSew6Ol66Jd-yzMuyUcyCI3tqW4kXYXimw/edit" target="_blank" class="mini-btn" style="background:rgba(16,185,129,0.16); color:#6ee7b7; border-color:rgba(16,185,129,0.4);">
+          📗 Abrir Planilha (Aba Usuarios / Gastos)
+        </a>
+        <button class="mini-btn" onclick="pullFromCloudNow()">
+          🔄 Atualizar da Nuvem
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero Card do Veículo -->
+    <header class="cockpit-hero">
+      <div class="cockpit-left">
+        <div class="argo-emblem">
+          <svg width="40" height="40" viewBox="0 0 64 64" fill="none">
+            <path d="M10 38L16 22C17.5 18.5 20.5 17 24.5 17H39.5C43.5 17 46.5 18.5 48 22L54 38" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+            <rect x="6" y="34" width="52" height="15" rx="6" fill="#FFFFFF"/>
+            <circle cx="17" cy="49" r="5.5" fill="#0F172A" stroke="#FFFFFF" stroke-width="2.5"/>
+            <circle cx="47" cy="49" r="5.5" fill="#0F172A" stroke="#FFFFFF" stroke-width="2.5"/>
+            <rect x="11" y="38" width="9" height="4" rx="2" fill="#EF4444"/>
+            <rect x="44" y="38" width="9" height="4" rx="2" fill="#EF4444"/>
+          </svg>
+          <span>ARGO 24/25</span>
+        </div>
+        <div class="cockpit-title">
+          <h1>
+            Fiat Argo 2024/25
+            <span class="color-tag">Vermelho</span>
+          </h1>
+          <p>Controle REA de Abastecimentos, Peças Trocadas & Semáforo Sincronizado no Google Planilhas</p>
+        </div>
+      </div>
+
+      <div class="cockpit-right">
+        <div class="gauge-box">
+          <small>⚡ Custo Real / KM</small>
+          <strong class="mono" id="heroCostKm">R$ 0,00</strong>
+        </div>
+        <div class="gauge-box">
+          <small>💧 Consumo Médio</small>
+          <strong class="mono" id="heroKmL" style="color: var(--sky);">12,8 km/L</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navegação -->
+    <nav class="nav-bar">
+      <button class="nav-tab active" onclick="switchPane('pane-fuel', this)">⛽ Abastecer</button>
+      <button class="nav-tab" onclick="switchPane('pane-maint', this)">🔧 Peças Trocadas</button>
+      <button class="nav-tab" onclick="switchPane('pane-analytics', this)">📊 Financeiro & Planilha</button>
+      <button class="nav-tab" onclick="switchPane('pane-semaforo', this)">🚦 Semáforo Corridas</button>
+    </nav>
+
+    <!-- KPIs Globais -->
+    <div class="kpi-row">
+      <div class="kpi-glass">
+        <div class="kpi-top"><span>📍 QUILOMETRAGEM</span><span>ODÔMETRO</span></div>
+        <div class="kpi-num mono" id="kpiOdometer">0 km</div>
+        <div class="kpi-foot" id="kpiDistanceSpan">Trecho monitorado: 0 km</div>
+      </div>
+
+      <div class="kpi-glass">
+        <div class="kpi-top"><span>⛽ GASTO COMBUSTÍVEL</span><span id="kpiFuelCount">0 abast.</span></div>
+        <div class="kpi-num mono" id="kpiFuelTotal" style="color:#fda4af;">R$ 0,00</div>
+        <div class="kpi-foot" id="kpiFuelLiters">0,00 Litros acumulados</div>
+      </div>
+
+      <div class="kpi-glass">
+        <div class="kpi-top"><span>🔧 PEÇAS & OFICINA</span><span id="kpiMaintCount">0 trocas</span></div>
+        <div class="kpi-num mono" id="kpiMaintTotal" style="color:#7dd3fc;">R$ 0,00</div>
+        <div class="kpi-foot" id="kpiMaintSplit">Peças: R$ 0,00 • M. Obra: R$ 0,00</div>
+      </div>
+
+      <div class="kpi-glass">
+        <div class="kpi-top"><span>💳 CRÉDITO VS DÉBITO</span><span>TOTAL GERAL</span></div>
+        <div class="kpi-num mono" id="kpiGrandTotal" style="color:#6ee7b7;">R$ 0,00</div>
+        <div class="kpi-foot" id="kpiCardSplit">Crédito: R$ 0,00 • Débito: R$ 0,00</div>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         PAINEL 1: ABASTECIMENTO
+         =================================================================== -->
+    <section id="pane-fuel" class="tab-pane active">
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="fuelFormTitle">⛽ Registrar Abastecimento — Argo 2024/25 Vermelho</h2>
+            <p>Todas as vezes que for abastecer: quilometragem, quanto vai abastecer, tipo de combustível, valor do litro e se pagou no crédito ou débito.</p>
+          </div>
+        </div>
+
+        <input type="hidden" id="fuelEditId" value="" />
+
+        <label style="display:block; font-size:0.78rem; font-weight:700; color:#fca5a5; margin-bottom:7px;">
+          ⚡ Atalho de valor na bomba (toque para preencher):
+        </label>
+        <div class="quick-money-row">
+          <button type="button" class="money-pill" onclick="setQuickFuelAmount(50)">+ R$ 50</button>
+          <button type="button" class="money-pill" onclick="setQuickFuelAmount(100)">+ R$ 100</button>
+          <button type="button" class="money-pill" onclick="setQuickFuelAmount(150)">+ R$ 150</button>
+          <button type="button" class="money-pill" onclick="setQuickFuelAmount(200)">+ R$ 200</button>
+          <button type="button" class="money-pill" onclick="setQuickFuelAmount(250)">+ R$ 250 (Cheio)</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field-box">
+            <label>📍 1. Quilometragem atual no painel (km) *</label>
+            <input type="number" id="inFuelOdo" step="1" placeholder="Ex: 28500" oninput="updateFuelPreview()" />
+          </div>
+
+          <div class="field-box">
+            <label>💵 2. Quanto vai abastecer? (Valor Total R$) *</label>
+            <input type="number" id="inFuelAmount" step="0.01" placeholder="Ex: 150.00" oninput="updateFuelPreview()" />
+          </div>
+
+          <div class="field-box">
+            <label>🏷️ 3. Valor do combustível (Preço por Litro R$/L) *</label>
+            <input type="number" id="inFuelPriceL" step="0.01" placeholder="Ex: 5.89" oninput="updateFuelPreview()" />
+          </div>
+
+          <div class="field-box">
+            <label>📅 Data do Abastecimento</label>
+            <input type="date" id="inFuelDate" />
+          </div>
+        </div>
+
+        <div class="field-box" style="margin-top: 15px;">
+          <label>⛽ 4. Qual tipo de combustível?</label>
+          <div class="choice-grid" id="fuelTypeGrid">
+            <button type="button" class="choice-card active-red" onclick="selectFuelType('Gasolina Comum', this)">
+              <span class="icon">⛽</span><span>Gasolina Comum</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectFuelType('Gasolina Aditivada', this)">
+              <span class="icon">✨</span><span>Gasolina Aditivada</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectFuelType('Etanol', this)">
+              <span class="icon">🌱</span><span>Etanol</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectFuelType('GNV', this)">
+              <span class="icon">🔥</span><span>GNV</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-box" style="margin-top: 15px;">
+          <label>💳 5. Pagou no Crédito ou Débito?</label>
+          <div class="choice-grid" id="fuelPayGrid">
+            <button type="button" class="choice-card active-blue" onclick="selectFuelPay('Crédito', this)">
+              <span class="icon">💳</span><span>Cartão de Crédito</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectFuelPay('Débito', this)">
+              <span class="icon">🏦</span><span>Cartão de Débito</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectFuelPay('PIX / Dinheiro', this)">
+              <span class="icon">💠</span><span>PIX / Dinheiro</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-box" style="margin-top: 15px;">
+          <label>🏪 Posto / Observação (Opcional)</label>
+          <input type="text" id="inFuelStation" placeholder="Ex: Posto Shell / Ipiranga" />
+        </div>
+
+        <div class="digital-readout">
+          <div class="main-calc">
+            💧 Volume calculado:
+            <strong class="mono" id="fuelCalcLiters">0,00 Litros</strong>
+          </div>
+          <div id="fuelCalcAutonomy" style="font-size: 0.81rem; color: var(--text-muted);">
+            Autonomia estimada no Argo: -- km
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn-glossy" id="btnSaveFuel" onclick="saveFuel()">
+            ⛽ Salvar Abastecimento na Minha Planilha
+          </button>
+          <button type="button" class="mini-btn" id="btnCancelFuel" style="display:none; padding:0 18px;" onclick="resetFuelForm()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>📋 Histórico de Abastecimentos do Argo</h2>
+            <p>Sincronizado com a aba <code>Abastecimentos</code> da sua planilha.</p>
+          </div>
+          <select id="filterFuelPay" onchange="renderEverything()" style="background:var(--bg-input); color:#fff; border:1px solid rgba(255,255,255,0.15); padding:8px 12px; border-radius:10px; font-size:0.81rem;">
+            <option value="ALL">Todos os pagamentos</option>
+            <option value="Crédito">💳 Só Crédito</option>
+            <option value="Débito">🏦 Só Débito</option>
+            <option value="PIX / Dinheiro">💠 Só PIX / Dinheiro</option>
+          </select>
+        </div>
+        <div id="fuelHistoryContainer" class="record-list"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         PAINEL 2: PEÇAS JÁ TROCADAS E MANUTENÇÃO
+         =================================================================== -->
+    <section id="pane-maint" class="tab-pane">
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="maintFormTitle">🔧 Registrar Peça Trocada / Manutenção — Argo 2024/25</h2>
+            <p>Registre qual peça já foi trocada, a data da troca, por quem foi feita, quanto foi de mão de obra, quanto foi da peça e onde comprou a peça.</p>
+          </div>
+        </div>
+
+        <input type="hidden" id="maintEditId" value="" />
+
+        <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--sky); margin-bottom:7px;">
+          ⚡ Atalhos rápidos de peças do Fiat Argo 2024/25:
+        </label>
+        <div class="parts-catalog">
+          <button type="button" class="part-pill" onclick="fillQuickPart('Óleo 0W20 Selenia + Filtro de Óleo')">🛢️ Óleo 0W20 + Filtro</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Pastilha de Freio Dianteira')">🛑 Pastilha de Freio</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Disco de Freio Dianteiro')">💿 Disco de Freio</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Jogo de Pneus')">🛞 Jogo de Pneus</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Jogo de Velas de Ignição Firefly')">⚡ Velas Firefly</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Bateria 60Ah EFB')">🔋 Bateria</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Filtro de Ar do Motor + Filtro de Cabine')">🌬️ Filtros Ar + Cabine</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Kit Amortecedor / Batente / Bieleta')">🔩 Amortecedor / Suspensão</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Alinhamento + Balanceamento')">📐 Alinhamento e Balanceamento</button>
+          <button type="button" class="part-pill" onclick="fillQuickPart('Correia de Acessórios + Tensor')">⚙️ Correia + Tensor</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field-box">
+            <label>🔩 1. Qual peça do veículo foi trocada? *</label>
+            <input type="text" id="inMaintPart" placeholder="Ex: Pastilha de freio dianteira" />
+          </div>
+
+          <div class="field-box">
+            <label>📅 2. Data em que foi feita a troca *</label>
+            <input type="date" id="inMaintDate" />
+          </div>
+
+          <div class="field-box">
+            <label>👨‍🔧 3. Feita por quem? (Mecânico / Oficina) *</label>
+            <input type="text" id="inMaintWho" placeholder="Ex: Oficina do João / Concessionária Fiat" />
+          </div>
+
+          <div class="field-box">
+            <label>🏪 4. Onde comprou a peça? (Loja / Site) *</label>
+            <input type="text" id="inMaintWhere" placeholder="Ex: Mercado Livre, AutoZone, Fiat..." />
+          </div>
+
+          <div class="field-box">
+            <label>🏷️ 5. Quanto foi da Peça? (R$) *</label>
+            <input type="number" id="inMaintPartCost" step="0.01" placeholder="Ex: 240.00" oninput="updateMaintPreview()" />
+          </div>
+
+          <div class="field-box">
+            <label>🛠️ 6. Quanto foi de Mão de Obra? (R$) *</label>
+            <input type="number" id="inMaintLaborCost" step="0.01" placeholder="Ex: 120.00" oninput="updateMaintPreview()" />
+          </div>
+
+          <div class="field-box">
+            <label>📍 Quilometragem do Argo na troca (km)</label>
+            <input type="number" id="inMaintOdo" step="1" placeholder="Ex: 28100" />
+          </div>
+
+          <div class="field-box">
+            <label>📝 Detalhes / Marca da Peça / Garantia</label>
+            <input type="text" id="inMaintNotes" placeholder="Ex: Marca Cobreq / Original Mopar, 6 meses garantia" />
+          </div>
+        </div>
+
+        <div class="field-box" style="margin-top: 15px;">
+          <label>💳 Pagou no Crédito ou Débito?</label>
+          <div class="choice-grid" id="maintPayGrid">
+            <button type="button" class="choice-card active-blue" onclick="selectMaintPay('Crédito', this)">
+              <span class="icon">💳</span><span>Cartão de Crédito</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectMaintPay('Débito', this)">
+              <span class="icon">🏦</span><span>Cartão de Débito</span>
+            </button>
+            <button type="button" class="choice-card" onclick="selectMaintPay('PIX / Dinheiro', this)">
+              <span class="icon">💠</span><span>PIX / Dinheiro</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="digital-readout" style="border-color: rgba(16, 185, 129, 0.4); border-left-color: var(--emerald);">
+          <div class="main-calc">
+            💰 Total do Serviço (Peça + Mão de Obra):
+            <strong class="mono" id="maintCalcTotal" style="color: var(--emerald);">R$ 0,00</strong>
+          </div>
+          <div id="maintCalcSplit" style="font-size: 0.81rem; color: var(--text-muted);">
+            Peça: R$ 0,00 + Mão de Obra: R$ 0,00
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn-glossy blue" id="btnSaveMaint" onclick="saveMaint()">
+            🔧 Salvar Peça Trocada na Minha Planilha
+          </button>
+          <button type="button" class="mini-btn" id="btnCancelMaint" style="display:none; padding:0 18px;" onclick="resetMaintForm()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>🔩 Histórico de Peças Já Trocadas — Fiat Argo 2024/25</h2>
+            <p>Sincronizado com a aba <code>Manutencao_Pecas</code> da sua planilha.</p>
+          </div>
+          <input type="text" id="searchMaintInput" placeholder="🔍 Buscar peça, oficina ou loja..." oninput="renderEverything()" style="background:var(--bg-input); color:#fff; border:1px solid rgba(255,255,255,0.15); padding:8px 13px; border-radius:10px; font-size:0.82rem; min-width:220px;" />
+        </div>
+        <div id="maintHistoryContainer" class="record-list"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         PAINEL 3: FINANCEIRO & PLANILHA GOOGLE
+         =================================================================== -->
+    <section id="pane-analytics" class="tab-pane">
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>📊 Raio-X Financeiro do Fiat Argo 2024/25 Vermelho</h2>
+            <p>Proporção entre Combustível, Peças, Mão de Obra e Cartões (Crédito vs. Débito).</p>
+          </div>
+        </div>
+
+        <h3 style="font-size:0.88rem; color:#fff; margin-bottom:4px;">1. Divisão: Combustível vs. Só Peças vs. Só Mão de Obra</h3>
+        <div class="progress-bar">
+          <div id="barFuel" class="progress-seg" style="width:50%; background:#ef4444;"></div>
+          <div id="barParts" class="progress-seg" style="width:30%; background:#38bdf8;"></div>
+          <div id="barLabor" class="progress-seg" style="width:20%; background:#f59e0b;"></div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:18px; font-size:0.82rem; color:var(--text-secondary); margin-bottom:20px;">
+          <span>🔴 Combustível: <strong id="legFuel" style="color:#fff;">R$ 0,00</strong></span>
+          <span>🔵 Só Peças: <strong id="legParts" style="color:#fff;">R$ 0,00</strong></span>
+          <span>🟡 Só Mão de Obra: <strong id="legLabor" style="color:#fff;">R$ 0,00</strong></span>
+        </div>
+
+        <h3 style="font-size:0.88rem; color:#fff; margin-bottom:4px;">2. Pagamentos: Cartão de Crédito vs. Cartão de Débito vs. PIX</h3>
+        <div class="progress-bar">
+          <div id="barCred" class="progress-seg" style="width:50%; background:#3b82f6;"></div>
+          <div id="barDeb" class="progress-seg" style="width:35%; background:#10b981;"></div>
+          <div id="barPix" class="progress-seg" style="width:15%; background:#a855f7;"></div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:18px; font-size:0.82rem; color:var(--text-secondary);">
+          <span>💳 Total no Crédito: <strong id="legCred" style="color:#fff;">R$ 0,00</strong></span>
+          <span>🏦 Total no Débito: <strong id="legDeb" style="color:#fff;">R$ 0,00</strong></span>
+          <span>💠 Total PIX / Dinheiro: <strong id="legPix" style="color:#fff;">R$ 0,00</strong></span>
+        </div>
+      </div>
+
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>☁️ Controle de Acesso & Backup na Sua Planilha Google</h2>
+            <p>Para dar ou tirar acesso de alguém, basta abrir sua planilha oficial na aba <strong>Usuarios</strong> (ou usar o menu <strong>🔒 Argo Segurança</strong> lá dentro).</p>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+          <a href="https://docs.google.com/spreadsheets/d/1Kcr9P4MVfkSew6Ol66Jd-yzMuyUcyCI3tqW4kXYXimw/edit" target="_blank" class="btn-glossy emerald" style="text-decoration:none;">
+            📗 Abrir Minha Planilha no Google
+          </a>
+          <button type="button" class="btn-glossy blue" onclick="pushToCloudNow(false)">
+            ☁️ Forçar Sincronização Agora
+          </button>
+          <button type="button" class="btn-glossy" style="background:#1e293b; box-shadow:none;" onclick="exportToExcelCsv()">
+            📊 Baixar Cópia em Excel (.CSV)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         PAINEL 4: SEMÁFORO REA DE CORRIDAS
+         =================================================================== -->
+    <section id="pane-semaforo" class="tab-pane">
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>🚦 Calculadora & Semáforo REA de Corridas</h2>
+            <p>Desconta automaticamente o Custo Real por KM do seu Fiat Argo 2024/25 Vermelho.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field-box">
+            <label>💰 Valor Ofertado na Corrida (R$)</label>
+            <input type="number" id="simPrice" step="0.50" value="24.80" oninput="evaluateRide()" />
+          </div>
+          <div class="field-box">
+            <label>🚗 Distância até o Passageiro (km)</label>
+            <input type="number" id="simPickupKm" step="0.1" value="1.1" oninput="evaluateRide()" />
+          </div>
+          <div class="field-box">
+            <label>📍 Distância da Viagem (km)</label>
+            <input type="number" id="simTripKm" step="0.1" value="7.4" oninput="evaluateRide()" />
+          </div>
+          <div class="field-box">
+            <label>⏱️ Tempo Total (minutos)</label>
+            <input type="number" id="simTotalMin" step="1" value="19" oninput="evaluateRide()" />
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-top:15px; padding-top:15px; border-top:1px solid var(--border-subtle);">
+          <div class="field-box">
+            <label>🟢 Verde: Mínimo R$/km</label>
+            <input type="number" id="thGreenKm" step="0.10" value="2.00" oninput="evaluateRide()" />
+          </div>
+          <div class="field-box">
+            <label>🟢 Verde: Mínimo R$/hora</label>
+            <input type="number" id="thGreenHour" step="1" value="45" oninput="evaluateRide()" />
+          </div>
+          <div class="field-box">
+            <label>🟡 Amarelo: Mínimo R$/km</label>
+            <input type="number" id="thYellowKm" step="0.10" value="1.50" oninput="evaluateRide()" />
+          </div>
+          <div class="field-box">
+            <label>⛽ Custo do Argo (R$/km)</label>
+            <input type="number" id="thCostKm" step="0.05" value="0.75" oninput="evaluateRide()" />
+          </div>
+        </div>
+
+        <div id="semResultCard" style="margin-top:18px; background:rgba(6,9,18,0.9); border:2px solid var(--emerald); border-radius:20px; padding:18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div id="semOrb" style="width:52px; height:52px; border-radius:50%; background:var(--emerald); box-shadow:0 0 24px var(--emerald); flex-shrink:0;"></div>
+          <div>
+            <div id="semVerdict" style="font-size:1.2rem; font-weight:800; color:var(--emerald);">VALE A PENA ACEITAR</div>
+            <div id="semNumbers" class="mono" style="font-size:0.96rem; font-weight:700; color:#fff; margin-top:3px;">R$ 2,92/km • R$ 78/h</div>
+            <div id="semProfit" style="font-size:0.84rem; color:var(--text-secondary); margin-top:4px;">Lucro Líquido Real (descontando o custo do Argo): R$ 18,43</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toastPopup" class="toast-popup">✔ Salvo com sucesso!</div>
+
+  <script>
+    // Planilha Oficial do Usuário + Endpoint Seguro Google Apps Script:
+    const OFFICIAL_SPREADSHEET_ID = "1Kcr9P4MVfkSew6Ol66Jd-yzMuyUcyCI3tqW4kXYXimw";
+    const OFFICIAL_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1Kcr9P4MVfkSew6Ol66Jd-yzMuyUcyCI3tqW4kXYXimw/edit";
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyUplbaDirv6nUDZg1THBmFGxVZNXrH7tLx0hm9F2a_TSYmbxyo-HOXPYvnFC4jG4o6/exec";
+
+    const KEY_FUEL = "argo_2024_25_web_fuels_v1";
+    const KEY_MAINT = "argo_2024_25_web_maints_v1";
+    const KEY_AUTH_LOCAL = "argo_2024_25_auth_v1";
+    const KEY_SESSION = "argo_2024_25_session_token_v1";
+    const KEY_SHEETS = "argo_2024_25_sheets_cfg_v2";
+
+    let selectedFuelType = "Gasolina Comum";
+    let selectedFuelPay = "Crédito";
+    let selectedMaintPay = "Crédito";
+
+    let fuelRecords = JSON.parse(localStorage.getItem(KEY_FUEL) || "[]");
+    let maintRecords = JSON.parse(localStorage.getItem(KEY_MAINT) || "[]");
+    let localAuth = JSON.parse(localStorage.getItem(KEY_AUTH_LOCAL) || "null");
+    let sheetsConfig = JSON.parse(localStorage.getItem(KEY_SHEETS) || '{"webhookUrl":"","lastSync":""}');
+    if (!sheetsConfig.webhookUrl) {
+      sheetsConfig.webhookUrl = DEFAULT_WEBHOOK_URL;
+      localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
+    }
+    let activeSession = JSON.parse(localStorage.getItem(KEY_SESSION) || sessionStorage.getItem(KEY_SESSION) || "null");
+
+    // Permite passar ?api=URL_DO_APPS_SCRIPT no link do celular caso atualize no futuro
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("api")) {
+      sheetsConfig.webhookUrl = urlParams.get("api").trim();
+      localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
+    }
+
+    // =====================================================================
+    // LOGIN E VALIDAÇÃO OBRIGATÓRIA NA ABA `Usuarios` DA PLANILHA OFICIAL
+    // =====================================================================
+    async function initAuth() {
+      const tag = document.getElementById("loginModeTag");
+      tag.textContent = "☁️ Protegido pela Planilha";
+
+      if (activeSession && activeSession.user && activeSession.token && activeSession.token !== "LOCAL_MODE") {
+        unlockCockpit(activeSession.user);
+        await pullFromCloudNow(true);
+      } else {
+        activeSession = null;
+        localStorage.removeItem(KEY_SESSION);
+        sessionStorage.removeItem(KEY_SESSION);
+      }
+    }
+
+    function showLoginError(msg) {
+      const box = document.getElementById("loginErrorBox");
+      if (!msg) {
+        box.style.display = "none";
+        return;
+      }
+      box.textContent = msg;
+      box.style.display = "block";
+    }
+
+    function togglePassVisibility() {
+      const el = document.getElementById("loginPass");
+      el.type = el.type === "password" ? "text" : "password";
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      showLoginError("");
+      const user = document.getElementById("loginUser").value.trim().toLowerCase();
+      const pass = document.getElementById("loginPass").value.trim();
+      const remember = document.getElementById("loginRemember").checked;
+      const btn = document.getElementById("btnLoginSubmit");
+
+      if (!user || !pass) return;
+
+      const endpointUrl = sheetsConfig.webhookUrl || DEFAULT_WEBHOOK_URL;
+      btn.disabled = true;
+      btn.textContent = "🔄 Verificando na aba Usuarios da Planilha...";
+      try {
+        const res = await fetch(endpointUrl, {
+          method: "POST",
+          redirect: "follow",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "login", user, pass, remember })
+        });
+        const data = await res.json();
+        btn.disabled = false;
+        btn.textContent = "🚀 Entrar no Sistema do Argo";
+
+        if (!data || !data.ok) {
+          showLoginError((data && data.error) || "Acesso negado pela planilha.");
+          return;
+        }
+
+        activeSession = { user: data.user, token: data.token, role: data.role || "DONO" };
+        if (remember) {
+          localStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
+        } else {
+          sessionStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
+        }
+
+        if (Array.isArray(data.fuelRecords)) {
+          fuelRecords = data.fuelRecords;
+          localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
+        }
+        if (Array.isArray(data.maintRecords)) {
+          maintRecords = data.maintRecords;
+          localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+        }
+
+        sheetsConfig.webhookUrl = endpointUrl;
+        sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+        localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
+
+        unlockCockpit(data.user);
+        notifyToast("✅ Autenticado via Google Planilhas!");
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "🚀 Entrar no Sistema do Argo";
+        showLoginError("Falha de conexão com o servidor seguro da planilha. Verifique sua internet.");
+      }
+    }
+
+    function unlockCockpit(user) {
+      document.getElementById("loginOverlay").style.display = "none";
+      document.getElementById("loggedUserDisplay").textContent = user;
+      updateSyncBadgeUI();
+      renderEverything();
+    }
+
+    async function logoutUser() {
+      if (sheetsConfig.webhookUrl && activeSession && activeSession.token && activeSession.token !== "LOCAL_MODE") {
+        try {
+          fetch(sheetsConfig.webhookUrl, {
+            method: "POST",
+            redirect: "follow",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "logout", token: activeSession.token })
+          });
+        } catch (_) {}
+      }
+      activeSession = null;
+      localStorage.removeItem(KEY_SESSION);
+      sessionStorage.removeItem(KEY_SESSION);
+      document.getElementById("loginPass").value = "";
+      document.getElementById("loginOverlay").style.display = "flex";
+    }
+
+    function openAccountModal() {
+      document.getElementById("cfgOldPass").value = "";
+      document.getElementById("cfgNewPass").value = "";
+      document.getElementById("accountModal").style.display = "flex";
+    }
+
+    async function changeUserPassword() {
+      const oldPass = document.getElementById("cfgOldPass").value.trim();
+      const newPass = document.getElementById("cfgNewPass").value.trim();
+      if (!oldPass || newPass.length < 4) {
+        alert("Informe a senha atual e uma nova senha de pelo menos 4 caracteres.");
+        return;
+      }
+
+      if (sheetsConfig.webhookUrl && activeSession && activeSession.token && activeSession.token !== "LOCAL_MODE") {
+        try {
+          const res = await fetch(sheetsConfig.webhookUrl, {
+            method: "POST",
+            redirect: "follow",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "changePassword", token: activeSession.token, oldPass, newPass })
+          });
+          const data = await res.json();
+          if (!data || !data.ok) {
+            alert((data && data.error) || "Erro ao trocar a senha na planilha.");
+            return;
+          }
+          activeSession.token = data.token;
+          localStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
+          document.getElementById("accountModal").style.display = "none";
+          notifyToast("🔒 Senha atualizada e criptografada na aba Usuarios da Planilha!");
+          return;
+        } catch (e) {
+          alert("Erro de conexão ao tentar alterar a senha na planilha.");
+          return;
+        }
+      }
+
+      if (localAuth && oldPass === localAuth.pass) {
+        localAuth.pass = newPass;
+        localStorage.setItem(KEY_AUTH_LOCAL, JSON.stringify(localAuth));
+        document.getElementById("accountModal").style.display = "none";
+        notifyToast("🔒 Senha local atualizada!");
+      } else {
+        alert("Senha atual incorreta.");
+      }
+    }
+
+    // =====================================================================
+    // SINCRONIZAÇÃO BIDIRECIONAL COM A PLANILHA OFICIAL
+    // =====================================================================
+    function openSheetsModal() {
+      document.getElementById("inSheetWebhookUrl").value = sheetsConfig.webhookUrl || "";
+      document.getElementById("sheetsModal").style.display = "flex";
+    }
+
+    function closeSheetsModal() {
+      document.getElementById("sheetsModal").style.display = "none";
+    }
+
+    async function copyAppsScriptCode() {
+      try {
+        const res = await fetch("./Codigo_GoogleSheets_Argo.gs");
+        const text = await res.text();
+        await navigator.clipboard.writeText(text);
+        notifyToast("📋 Código seguro copiado! Cole em Extensões > Apps Script na sua planilha.");
+      } catch (_) {
+        alert("Abra o arquivo Codigo_GoogleSheets_Argo.gs na pasta do projeto e copie o conteúdo para Extensões > Apps Script.");
+      }
+    }
+
+    function saveWebhookUrlConfig() {
+      sheetsConfig.webhookUrl = document.getElementById("inSheetWebhookUrl").value.trim();
+      localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
+      updateSyncBadgeUI();
+      closeSheetsModal();
+      const tag = document.getElementById("loginModeTag");
+      if (tag) tag.textContent = sheetsConfig.webhookUrl ? "☁️ Protegido pela Planilha" : "⚡ Modo Local";
+      notifyToast("🔗 Conexão com a Planilha salva! Faça login com seu usuário da aba Usuarios.");
+    }
+
+    function updateSyncBadgeUI(state) {
+      const badge = document.getElementById("syncStatusBadge");
+      const txt = document.getElementById("syncStatusText");
+      if (!badge || !txt) return;
+
+      if (state === "syncing") {
+        badge.className = "sync-pill syncing";
+        txt.textContent = "Sincronizando Planilha...";
+        return;
+      }
+
+      if (sheetsConfig.webhookUrl) {
+        badge.className = "sync-pill";
+        txt.textContent = sheetsConfig.lastSync
+          ? `Salvo na Planilha (${sheetsConfig.lastSync})`
+          : "Planilha Conectada";
+      } else {
+        badge.className = "sync-pill pending";
+        txt.textContent = "Conectar Apps Script (/exec)";
+      }
+    }
+
+    async function pushToCloudNow(silent = true) {
+      if (!sheetsConfig.webhookUrl || !activeSession || !activeSession.token || activeSession.token === "LOCAL_MODE") {
+        return;
+      }
+      updateSyncBadgeUI("syncing");
+      try {
+        const res = await fetch(sheetsConfig.webhookUrl, {
+          method: "POST",
+          redirect: "follow",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "push",
+            token: activeSession.token,
+            fuelRecords,
+            maintRecords
+          })
+        });
+        const data = await res.json();
+        if (data && data.code === "SESSAO_EXPIRADA") {
+          alert("Sua sessão expirou ou foi bloqueada na planilha. Faça login novamente.");
+          logoutUser();
+          return;
+        }
+        if (data && data.ok) {
+          sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+          localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
+          updateSyncBadgeUI();
+          if (!silent) notifyToast("☁️ Sincronizado com sucesso na sua Planilha Google!");
+        }
+      } catch (err) {
+        updateSyncBadgeUI();
+        if (!silent) alert("Falha ao sincronizar com a planilha.");
+      }
+    }
+
+    async function pullFromCloudNow(silent = false) {
+      if (!sheetsConfig.webhookUrl || !activeSession || !activeSession.token || activeSession.token === "LOCAL_MODE") {
+        if (!silent) openSheetsModal();
+        return;
+      }
+      updateSyncBadgeUI("syncing");
+      try {
+        const res = await fetch(sheetsConfig.webhookUrl, {
+          method: "POST",
+          redirect: "follow",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "pull",
+            token: activeSession.token
+          })
+        });
+        const data = await res.json();
+        if (data && data.code === "SESSAO_EXPIRADA") {
+          logoutUser();
+          return;
+        }
+        if (data && data.ok) {
+          if (Array.isArray(data.fuelRecords)) {
+            fuelRecords = data.fuelRecords;
+            localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
+          }
+          if (Array.isArray(data.maintRecords)) {
+            maintRecords = data.maintRecords;
+            localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+          }
+          sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+          localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
+          renderEverything();
+          updateSyncBadgeUI();
+          if (!silent) notifyToast("🔄 Dados atualizados direto da sua Planilha Google!");
+        }
+      } catch (e) {
+        updateSyncBadgeUI();
+      }
+    }
+
+    // =====================================================================
+    // LÓGICA DE ABASTECIMENTO, PEÇAS TROCADAS E SEMÁFORO
+    // =====================================================================
+    function todayIso() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function isoToBr(iso) {
+      if (!iso) return "";
+      if (iso.includes("/")) return iso;
+      const p = iso.split("-");
+      return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
+    }
+
+    function fmtMoney(v) {
+      return (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function notifyToast(msg) {
+      const el = document.getElementById("toastPopup");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 2800);
+    }
+
+    function switchPane(paneId, btn) {
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".nav-tab").forEach(b => b.classList.remove("active"));
+      document.getElementById(paneId).classList.add("active");
+      btn.classList.add("active");
+    }
+
+    function setQuickFuelAmount(val) {
+      document.getElementById("inFuelAmount").value = val.toFixed(2);
+      updateFuelPreview();
+    }
+
+    function selectFuelType(type, btn) {
+      selectedFuelType = type;
+      document.querySelectorAll("#fuelTypeGrid .choice-card").forEach(c => c.className = "choice-card");
+      btn.classList.add("active-red");
+      updateFuelPreview();
+    }
+
+    function selectFuelPay(pay, btn) {
+      selectedFuelPay = pay;
+      document.querySelectorAll("#fuelPayGrid .choice-card").forEach(c => c.className = "choice-card");
+      btn.classList.add("active-blue");
+    }
+
+    function selectMaintPay(pay, btn) {
+      selectedMaintPay = pay;
+      document.querySelectorAll("#maintPayGrid .choice-card").forEach(c => c.className = "choice-card");
+      btn.classList.add("active-blue");
+    }
+
+    function fillQuickPart(name) {
+      const el = document.getElementById("inMaintPart");
+      el.value = name;
+      el.focus();
+    }
+
+    function updateFuelPreview() {
+      const amount = parseFloat(document.getElementById("inFuelAmount").value) || 0;
+      const priceL = parseFloat(document.getElementById("inFuelPriceL").value) || 0;
+      const liters = (amount > 0 && priceL > 0) ? (amount / priceL) : 0;
+      document.getElementById("fuelCalcLiters").textContent = `${fmtMoney(liters)} Litros (${selectedFuelType})`;
+      const baseKmL = selectedFuelType === "Etanol" ? 9.0 : 12.8;
+      document.getElementById("fuelCalcAutonomy").textContent =
+        liters > 0 ? `Autonomia estimada no Argo: ~${Math.round(liters * baseKmL)} km` : "Informe o valor total e o preço/L";
+    }
+
+    function updateMaintPreview() {
+      const p = parseFloat(document.getElementById("inMaintPartCost").value) || 0;
+      const l = parseFloat(document.getElementById("inMaintLaborCost").value) || 0;
+      document.getElementById("maintCalcTotal").textContent = `R$ ${fmtMoney(p + l)}`;
+      document.getElementById("maintCalcSplit").textContent = `Peça: R$ ${fmtMoney(p)} + Mão de Obra: R$ ${fmtMoney(l)}`;
+    }
+
+    function saveFuel() {
+      const odo = parseFloat(document.getElementById("inFuelOdo").value) || 0;
+      const amount = parseFloat(document.getElementById("inFuelAmount").value) || 0;
+      const priceL = parseFloat(document.getElementById("inFuelPriceL").value) || 0;
+      const dateIso = document.getElementById("inFuelDate").value || todayIso();
+      const station = document.getElementById("inFuelStation").value.trim();
+      const editId = document.getElementById("fuelEditId").value;
+
+      if (odo <= 0) { alert("Informe a quilometragem atual do seu Argo."); return; }
+      if (amount <= 0) { alert("Informe quanto vai abastecer (R$)."); return; }
+      if (priceL <= 0) { alert("Informe o valor do litro do combustível (R$/L)."); return; }
+
+      const rec = {
+        id: editId ? Number(editId) : Date.now(),
+        dateIso,
+        dateBr: isoToBr(dateIso),
+        odometerKm: odo,
+        totalAmountPaid: amount,
+        fuelType: selectedFuelType,
+        pricePerLiter: priceL,
+        liters: amount / priceL,
+        paymentMethod: selectedFuelPay,
+        stationName: station
+      };
+
+      if (editId) {
+        fuelRecords = fuelRecords.map(r => r.id === Number(editId) ? rec : r);
+      } else {
+        fuelRecords.unshift(rec);
+      }
+
+      fuelRecords.sort((a, b) => b.odometerKm - a.odometerKm || b.id - a.id);
+      localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
+      resetFuelForm();
+      renderEverything();
+      notifyToast("⛽ Abastecimento registrado!");
+      pushToCloudNow(true);
+    }
+
+    function editFuel(id) {
+      const r = fuelRecords.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById("fuelEditId").value = r.id;
+      document.getElementById("inFuelOdo").value = r.odometerKm;
+      document.getElementById("inFuelAmount").value = r.totalAmountPaid;
+      document.getElementById("inFuelPriceL").value = r.pricePerLiter;
+      document.getElementById("inFuelDate").value = r.dateIso || todayIso();
+      document.getElementById("inFuelStation").value = r.stationName || "";
+
+      selectedFuelType = r.fuelType;
+      document.querySelectorAll("#fuelTypeGrid .choice-card").forEach(c => {
+        c.className = "choice-card";
+        if (c.textContent.includes(r.fuelType)) c.classList.add("active-red");
+      });
+
+      selectedFuelPay = r.paymentMethod;
+      document.querySelectorAll("#fuelPayGrid .choice-card").forEach(c => {
+        c.className = "choice-card";
+        if (c.textContent.includes(r.paymentMethod)) c.classList.add("active-blue");
+      });
+
+      document.getElementById("fuelFormTitle").textContent = "✏️ Editando Abastecimento — Argo 2024/25";
+      document.getElementById("btnSaveFuel").textContent = "💾 Salvar Alterações";
+      document.getElementById("btnCancelFuel").style.display = "inline-block";
+      updateFuelPreview();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteFuel(id) {
+      if (!confirm("Deseja excluir este abastecimento?")) return;
+      fuelRecords = fuelRecords.filter(x => x.id !== id);
+      localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
+      renderEverything();
+      notifyToast("Abastecimento removido.");
+      pushToCloudNow(true);
+    }
+
+    function resetFuelForm() {
+      document.getElementById("fuelEditId").value = "";
+      document.getElementById("inFuelAmount").value = "";
+      document.getElementById("inFuelStation").value = "";
+      document.getElementById("inFuelDate").value = todayIso();
+      if (fuelRecords.length > 0) {
+        document.getElementById("inFuelOdo").value = fuelRecords[0].odometerKm;
+        document.getElementById("inFuelPriceL").value = fuelRecords[0].pricePerLiter;
+      }
+      document.getElementById("fuelFormTitle").textContent = "⛽ Registrar Abastecimento — Argo 2024/25 Vermelho";
+      document.getElementById("btnSaveFuel").textContent = "⛽ Salvar Abastecimento na Minha Planilha";
+      document.getElementById("btnCancelFuel").style.display = "none";
+      updateFuelPreview();
+    }
+
+    function saveMaint() {
+      const partName = document.getElementById("inMaintPart").value.trim();
+      const dateIso = document.getElementById("inMaintDate").value || todayIso();
+      const who = document.getElementById("inMaintWho").value.trim() || "Não informado";
+      const where = document.getElementById("inMaintWhere").value.trim() || "Não informado";
+      const partCost = parseFloat(document.getElementById("inMaintPartCost").value) || 0;
+      const laborCost = parseFloat(document.getElementById("inMaintLaborCost").value) || 0;
+      const odo = parseFloat(document.getElementById("inMaintOdo").value) || 0;
+      const notes = document.getElementById("inMaintNotes").value.trim();
+      const editId = document.getElementById("maintEditId").value;
+
+      if (!partName) { alert("Informe qual peça do Argo foi trocada."); return; }
+      if (partCost + laborCost <= 0) { alert("Informe o valor da peça e/ou mão de obra."); return; }
+
+      const rec = {
+        id: editId ? Number(editId) : Date.now(),
+        partName,
+        dateIso,
+        dateBr: isoToBr(dateIso),
+        mechanicOrWorkshop: who,
+        whereBought: where,
+        partCost,
+        laborCost,
+        totalCost: partCost + laborCost,
+        odometerKm: odo,
+        paymentMethod: selectedMaintPay,
+        notes
+      };
+
+      if (editId) {
+        maintRecords = maintRecords.map(m => m.id === Number(editId) ? rec : m);
+      } else {
+        maintRecords.unshift(rec);
+      }
+
+      localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+      resetMaintForm();
+      renderEverything();
+      notifyToast("🔧 Peça trocada registrada!");
+      pushToCloudNow(true);
+    }
+
+    function editMaint(id) {
+      const m = maintRecords.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById("maintEditId").value = m.id;
+      document.getElementById("inMaintPart").value = m.partName;
+      document.getElementById("inMaintDate").value = m.dateIso || todayIso();
+      document.getElementById("inMaintWho").value = m.mechanicOrWorkshop;
+      document.getElementById("inMaintWhere").value = m.whereBought;
+      document.getElementById("inMaintPartCost").value = m.partCost;
+      document.getElementById("inMaintLaborCost").value = m.laborCost;
+      document.getElementById("inMaintOdo").value = m.odometerKm || "";
+      document.getElementById("inMaintNotes").value = m.notes || "";
+
+      selectedMaintPay = m.paymentMethod;
+      document.querySelectorAll("#maintPayGrid .choice-card").forEach(c => {
+        c.className = "choice-card";
+        if (c.textContent.includes(m.paymentMethod)) c.classList.add("active-blue");
+      });
+
+      document.getElementById("maintFormTitle").textContent = "✏️ Editando Peça Trocada — Argo 2024/25";
+      document.getElementById("btnSaveMaint").textContent = "💾 Salvar Alterações da Peça";
+      document.getElementById("btnCancelMaint").style.display = "inline-block";
+      updateMaintPreview();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteMaint(id) {
+      if (!confirm("Deseja remover esta peça do histórico?")) return;
+      maintRecords = maintRecords.filter(x => x.id !== id);
+      localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+      renderEverything();
+      notifyToast("Peça removida.");
+      pushToCloudNow(true);
+    }
+
+    function resetMaintForm() {
+      document.getElementById("maintEditId").value = "";
+      document.getElementById("inMaintPart").value = "";
+      document.getElementById("inMaintDate").value = todayIso();
+      document.getElementById("inMaintWho").value = "";
+      document.getElementById("inMaintWhere").value = "";
+      document.getElementById("inMaintPartCost").value = "";
+      document.getElementById("inMaintLaborCost").value = "";
+      document.getElementById("inMaintNotes").value = "";
+      document.getElementById("maintFormTitle").textContent = "🔧 Registrar Peça Trocada / Manutenção — Argo 2024/25";
+      document.getElementById("btnSaveMaint").textContent = "🔧 Salvar Peça Trocada na Minha Planilha";
+      document.getElementById("btnCancelMaint").style.display = "none";
+      updateMaintPreview();
+    }
+
+    function badgeClassForPay(p) {
+      if (p === "Crédito") return "badge-credito";
+      if (p === "Débito") return "badge-debito";
+      return "badge-pix";
+    }
+
+    function renderEverything() {
+      const totalFuel = fuelRecords.reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
+      const totalLiters = fuelRecords.reduce((s, r) => s + (Number(r.totalAmountPaid || 0) / Math.max(0.01, Number(r.pricePerLiter || 1))), 0);
+      const fuelCred = fuelRecords.filter(r => r.paymentMethod === "Crédito").reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
+      const fuelDeb = fuelRecords.filter(r => r.paymentMethod === "Débito").reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
+      const fuelPix = fuelRecords.filter(r => r.paymentMethod === "PIX / Dinheiro").reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
+
+      const totalParts = maintRecords.reduce((s, m) => s + Number(m.partCost || 0), 0);
+      const totalLabor = maintRecords.reduce((s, m) => s + Number(m.laborCost || 0), 0);
+      const totalMaint = totalParts + totalLabor;
+      const maintCred = maintRecords.filter(m => m.paymentMethod === "Crédito").reduce((s, m) => s + Number(m.partCost || 0) + Number(m.laborCost || 0), 0);
+      const maintDeb = maintRecords.filter(m => m.paymentMethod === "Débito").reduce((s, m) => s + Number(m.partCost || 0) + Number(m.laborCost || 0), 0);
+      const maintPix = maintRecords.filter(m => m.paymentMethod === "PIX / Dinheiro").reduce((s, m) => s + Number(m.partCost || 0) + Number(m.laborCost || 0), 0);
+
+      const grandTotal = totalFuel + totalMaint;
+      const totalCred = fuelCred + maintCred;
+      const totalDeb = fuelDeb + maintDeb;
+      const totalPix = fuelPix + maintPix;
+
+      const allOdos = [...fuelRecords.map(r => Number(r.odometerKm || 0)), ...maintRecords.map(m => Number(m.odometerKm || 0))].filter(v => v > 0);
+      const maxOdo = allOdos.length ? Math.max(...allOdos) : 0;
+      const minOdo = allOdos.length ? Math.min(...allOdos) : 0;
+      const spanKm = Math.max(0, maxOdo - minOdo);
+
+      const sortedFuels = [...fuelRecords].filter(r => r.odometerKm > 0).sort((a, b) => a.odometerKm - b.odometerKm);
+      let avgKmL = 12.8;
+      if (sortedFuels.length >= 2) {
+        const dKm = sortedFuels[sortedFuels.length - 1].odometerKm - sortedFuels[0].odometerKm;
+        const usedL = sortedFuels.slice(1).reduce((s, r) => s + (r.totalAmountPaid / r.pricePerLiter), 0);
+        if (dKm > 0 && usedL > 0) avgKmL = Math.min(35, Math.max(3, dKm / usedL));
+      }
+
+      const effectiveKm = spanKm > 0 ? spanKm : (totalLiters * avgKmL);
+      const fuelCostKm = effectiveKm > 0 ? (totalFuel / effectiveKm) : 0;
+      const maintCostKm = totalMaint > 0 ? (totalMaint / Math.max(effectiveKm, 10000)) : 0;
+      const realCostKm = (fuelCostKm + maintCostKm) > 0 ? (fuelCostKm + maintCostKm) : 0.75;
+
+      document.getElementById("heroCostKm").textContent = `R$ ${fmtMoney(realCostKm)}`;
+      document.getElementById("heroKmL").textContent = `${avgKmL.toFixed(1).replace(".", ",")} km/L`;
+      document.getElementById("kpiOdometer").textContent = `${maxOdo.toLocaleString("pt-BR")} km`;
+      document.getElementById("kpiDistanceSpan").textContent = `Trecho monitorado: ${spanKm.toLocaleString("pt-BR")} km`;
+
+      document.getElementById("kpiFuelCount").textContent = `${fuelRecords.length} abast.`;
+      document.getElementById("kpiFuelTotal").textContent = `R$ ${fmtMoney(totalFuel)}`;
+      document.getElementById("kpiFuelLiters").textContent = `${fmtMoney(totalLiters)} Litros acumulados`;
+
+      document.getElementById("kpiMaintCount").textContent = `${maintRecords.length} trocas`;
+      document.getElementById("kpiMaintTotal").textContent = `R$ ${fmtMoney(totalMaint)}`;
+      document.getElementById("kpiMaintSplit").textContent = `Peças: R$ ${fmtMoney(totalParts)} • M. Obra: R$ ${fmtMoney(totalLabor)}`;
+
+      document.getElementById("kpiGrandTotal").textContent = `R$ ${fmtMoney(grandTotal)}`;
+      document.getElementById("kpiCardSplit").textContent = `Crédito: R$ ${fmtMoney(totalCred)} • Débito: R$ ${fmtMoney(totalDeb)}`;
+
+      const denom = Math.max(1, grandTotal);
+      document.getElementById("barFuel").style.width = `${(totalFuel / denom) * 100}%`;
+      document.getElementById("barParts").style.width = `${(totalParts / denom) * 100}%`;
+      document.getElementById("barLabor").style.width = `${(totalLabor / denom) * 100}%`;
+      document.getElementById("legFuel").textContent = `R$ ${fmtMoney(totalFuel)}`;
+      document.getElementById("legParts").textContent = `R$ ${fmtMoney(totalParts)}`;
+      document.getElementById("legLabor").textContent = `R$ ${fmtMoney(totalLabor)}`;
+
+      document.getElementById("barCred").style.width = `${(totalCred / denom) * 100}%`;
+      document.getElementById("barDeb").style.width = `${(totalDeb / denom) * 100}%`;
+      document.getElementById("barPix").style.width = `${(totalPix / denom) * 100}%`;
+      document.getElementById("legCred").textContent = `R$ ${fmtMoney(totalCred)}`;
+      document.getElementById("legDeb").textContent = `R$ ${fmtMoney(totalDeb)}`;
+      document.getElementById("legPix").textContent = `R$ ${fmtMoney(totalPix)}`;
+
+      document.getElementById("thCostKm").value = realCostKm.toFixed(2);
+      evaluateRide();
+
+      const fPay = document.getElementById("filterFuelPay").value;
+      const listFuels = fPay === "ALL" ? fuelRecords : fuelRecords.filter(r => r.paymentMethod === fPay);
+      const fBox = document.getElementById("fuelHistoryContainer");
+
+      if (!listFuels.length) {
+        fBox.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem; padding:10px 0;">Nenhum abastecimento registrado ainda.</div>`;
+      } else {
+        fBox.innerHTML = listFuels.map(r => {
+          const lit = r.totalAmountPaid / r.pricePerLiter;
+          return `
+            <div class="record-card">
+              <div>
+                <div class="record-header">
+                  <span class="record-title">⛽ ${r.fuelType}</span>
+                  <span class="mono" style="color:#fda4af; font-weight:800;">R$ ${fmtMoney(r.totalAmountPaid)}</span>
+                  <span class="badge-pay ${badgeClassForPay(r.paymentMethod)}">💳 ${r.paymentMethod}</span>
+                </div>
+                <div class="record-details">
+                  📅 <strong>${r.dateBr}</strong> • 📍 Odômetro: <strong class="mono">${Number(r.odometerKm).toLocaleString("pt-BR")} km</strong> •
+                  💧 Volume: <strong class="mono">${fmtMoney(lit)} L</strong> (a R$ ${fmtMoney(r.pricePerLiter)}/L)
+                </div>
+                ${r.stationName ? `<div class="record-sub">🏪 Posto/Obs: ${r.stationName}</div>` : ""}
+              </div>
+              <div class="record-btns">
+                <button class="mini-btn" onclick="editFuel(${r.id})">✏️ Editar</button>
+                <button class="mini-btn" style="color:#fda4af;" onclick="deleteFuel(${r.id})">✕</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      const q = (document.getElementById("searchMaintInput").value || "").toLowerCase().trim();
+      const listMaints = !q ? maintRecords : maintRecords.filter(m =>
+        (m.partName || "").toLowerCase().includes(q) ||
+        (m.mechanicOrWorkshop || "").toLowerCase().includes(q) ||
+        (m.whereBought || "").toLowerCase().includes(q)
+      );
+      const mBox = document.getElementById("maintHistoryContainer");
+
+      if (!listMaints.length) {
+        mBox.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem; padding:10px 0;">Nenhuma peça trocada registrada ainda.</div>`;
+      } else {
+        mBox.innerHTML = listMaints.map(m => {
+          const tot = Number(m.partCost || 0) + Number(m.laborCost || 0);
+          return `
+            <div class="record-card">
+              <div>
+                <div class="record-header">
+                  <span class="record-title" style="color:var(--sky);">🔩 ${m.partName}</span>
+                  <span class="mono" style="color:var(--emerald); font-weight:800;">Total: R$ ${fmtMoney(tot)}</span>
+                  <span class="badge-pay ${badgeClassForPay(m.paymentMethod)}">💳 ${m.paymentMethod}</span>
+                </div>
+                <div class="record-details">
+                  🏷️ Valor da Peça: <strong class="mono">R$ ${fmtMoney(m.partCost)}</strong> +
+                  🛠️ Mão de Obra: <strong class="mono">R$ ${fmtMoney(m.laborCost)}</strong>
+                </div>
+                <div class="record-details">
+                  📅 Data da Troca: <strong>${m.dateBr}</strong>
+                  ${m.odometerKm > 0 ? ` • 📍 Quilometragem: <strong class="mono">${Number(m.odometerKm).toLocaleString("pt-BR")} km</strong>` : ""}
+                </div>
+                <div class="record-sub">
+                  👨‍🔧 Feita por: <strong style="color:#fff;">${m.mechanicOrWorkshop}</strong> •
+                  🏪 Onde comprou a peça: <strong style="color:#fff;">${m.whereBought}</strong>
+                  ${m.notes ? `<br/>📝 Detalhes: ${m.notes}` : ""}
+                </div>
+              </div>
+              <div class="record-btns">
+                <button class="mini-btn" onclick="editMaint(${m.id})">✏️ Editar</button>
+                <button class="mini-btn" style="color:#fda4af;" onclick="deleteMaint(${m.id})">✕</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+
+    function evaluateRide() {
+      const price = parseFloat(document.getElementById("simPrice").value) || 0;
+      const pKm = parseFloat(document.getElementById("simPickupKm").value) || 0;
+      const tKm = parseFloat(document.getElementById("simTripKm").value) || 0;
+      const mins = Math.max(1, parseFloat(document.getElementById("simTotalMin").value) || 1);
+
+      const gKm = parseFloat(document.getElementById("thGreenKm").value) || 2.0;
+      const gHr = parseFloat(document.getElementById("thGreenHour").value) || 45.0;
+      const yKm = parseFloat(document.getElementById("thYellowKm").value) || 1.5;
+      const cKm = parseFloat(document.getElementById("thCostKm").value) || 0.75;
+
+      const totKm = Math.max(0.1, pKm + tKm);
+      const rKm = price / totKm;
+      const rHr = (price / mins) * 60;
+      const net = price - (totKm * cKm);
+
+      let label = "PAGANDO MAL (RECUSAR)";
+      let col = "#ef4444";
+      if ((rKm >= gKm && rHr >= gHr) || (rKm >= gKm * 1.25 && rHr >= 32)) {
+        label = "VALE A PENA ACEITAR";
+        col = "#10b981";
+      } else if (rKm >= yKm) {
+        label = "TEM POTENCIAL (AVALIAR)";
+        col = "#f59e0b";
+      }
+
+      document.getElementById("semResultCard").style.borderColor = col;
+      document.getElementById("semOrb").style.background = col;
+      document.getElementById("semOrb").style.boxShadow = `0 0 24px ${col}`;
+      document.getElementById("semVerdict").style.color = col;
+      document.getElementById("semVerdict").textContent = label;
+      document.getElementById("semNumbers").textContent = `R$ ${fmtMoney(rKm)}/km • R$ ${Math.round(rHr)}/h (${fmtMoney(totKm)} km em ${mins} min)`;
+      document.getElementById("semProfit").textContent = `Lucro Líquido Real (descontando R$ ${fmtMoney(totKm * cKm)} do Argo): R$ ${fmtMoney(net)}`;
+    }
+
+    function exportToExcelCsv() {
+      let csv = "\uFEFF=== ABASTECIMENTOS (FIAT ARGO 2024/25 VERMELHO) ===\n";
+      csv += "Data;Quilometragem (km);Valor Total (R$);Tipo de Combustivel;Preco por Litro (R$);Litros;Pagamento;Posto\n";
+      fuelRecords.forEach(r => {
+        const lit = (r.totalAmountPaid / r.pricePerLiter).toFixed(2).replace(".", ",");
+        csv += `${r.dateBr};${r.odometerKm};${String(r.totalAmountPaid).replace(".", ",")};${r.fuelType};${String(r.pricePerLiter).replace(".", ",")};${lit};${r.paymentMethod};${r.stationName || ""}\n`;
+      });
+
+      csv += "\n=== PECAS TROCADAS E MANUTENCAO (FIAT ARGO 2024/25 VERMELHO) ===\n";
+      csv += "Data da Troca;Peca Trocada;Feita por Quem;Onde Comprou a Peca;Valor da Peca (R$);Mao de Obra (R$);Total (R$);Quilometragem (km);Pagamento;Observacoes\n";
+      maintRecords.forEach(m => {
+        const tot = (Number(m.partCost) + Number(m.laborCost)).toFixed(2).replace(".", ",");
+        csv += `${m.dateBr};${m.partName};${m.mechanicOrWorkshop};${m.whereBought};${String(m.partCost).replace(".", ",")};${String(m.laborCost).replace(".", ",")};${tot};${m.odometerKm || 0};${m.paymentMethod};${m.notes || ""}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Planilha_Fiat_Argo_2024_25_Vermelho_${todayIso()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("inFuelDate").value = todayIso();
+    document.getElementById("inMaintDate").value = todayIso();
+    initAuth();
+  </script>
+</body>
+</html>

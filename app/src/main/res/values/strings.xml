@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lucronline</string>
+    <string name="accessibility_service_label">Lucronline - análise de corridas</string>
+    <string name="accessibility_service_description">Lê o conteúdo visível apenas nos apps de corrida compatíveis para calcular o retorno da oferta e exibir o resultado localmente. O texto da tela não é armazenado nem enviado.</string>
+</resources>

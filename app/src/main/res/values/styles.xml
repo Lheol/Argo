@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Principal do App -->
+    <style name="Theme.AppUuber" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#060911</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">#060911</item>
+    </style>
+
+    <!-- Tema de Inicialização Imediata (Zero Latência / Cold-Start Otimizado) -->
+    <style name="Theme.AppUuber.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+        <item name="android:statusBarColor">#060911</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">#060911</item>
+    </style>
+</resources>

@@ -1,0 +1,14 @@
+# Ignora arquivos binários grandes de engenharia reversa (XAPK / APK > 50MB)
+*.xapk
+*.apk
+
+# Pastas de build e cache do Gradle / Android Studio
+.gradle/
+.kotlin/
+.idea/
+build/
+app/build/
+local.properties
+
+# Protege o código privado do Apps Script para não ir ao GitHub público
+Codigo_GoogleSheets_Argo.gs

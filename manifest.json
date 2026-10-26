@@ -1,0 +1,10 @@
+{
+  "name": "Meu Argo 2024/25 Vermelho • Controle REA",
+  "short_name": "Argo 24/25",
+  "description": "Sistema de Controle de Combustível, Peças Trocadas e Semáforo de Corridas sincronizado com Google Planilhas",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#05070e",
+  "theme_color": "#b91c1c",
+  "orientation": "portrait-primary"
+}

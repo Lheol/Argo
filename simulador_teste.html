@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semáforo Uber & 99 — Simulador de Engenharia Reversa (Rota Pro 1.1.64)</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: #111827;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --blue: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #172554 0%, var(--bg) 55%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .badge-engine {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Moldura do Celular com Uber Driver + Semáforo Flutuante */
+    .phone-frame {
+      width: 360px;
+      height: 700px;
+      margin: 0 auto;
+      background: #090d16;
+      border: 10px solid #1f2937;
+      border-radius: 42px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Mapa simulado de fundo */
+    .map-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(9, 13, 22, 0.95)),
+        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(51, 65, 85, 0.22) 29px),
+        repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(51, 65, 85, 0.22) 29px);
+      z-index: 1;
+    }
+
+    .route-line {
+      position: absolute;
+      top: 180px;
+      left: 85px;
+      width: 190px;
+      height: 180px;
+      border-left: 4px dashed #38bdf8;
+      border-bottom: 4px solid #3b82f6;
+      border-radius: 0 0 0 24px;
+      z-index: 1;
+      opacity: 0.65;
+    }
+
+    .status-bar {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 22px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    /* PÍLULA DO SEMÁFORO FLUTUANTE (Igual ao FloatingSemaphoreManager.kt) */
+    .floating-semaphore {
+      position: relative;
+      z-index: 10;
+      margin: 8px 14px 0;
+      background: rgba(17, 24, 39, 0.95);
+      border: 2.5px solid var(--green);
+      border-radius: 999px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: grab;
+    }
+
+    .semaphore-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 16px var(--green);
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+
+    .semaphore-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+    }
+
+    .semaphore-status {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+
+    .semaphore-primary {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .semaphore-secondary {
+      font-size: 0.74rem;
+      color: #cbd5e1;
+    }
+
+    /* CARD DE CHAMADA DA UBER NA PARTE INFERIOR */
+    .uber-offer-card {
+      position: relative;
+      z-index: 5;
+      margin: 12px;
+      background: #111318;
+      border: 1px solid #2d3748;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .uber-tags {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .uber-category {
+      background: #1e293b;
+      color: #38bdf8;
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .uber-rating {
+      font-size: 0.8rem;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .uber-price {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin: 4px 0;
+    }
+
+    .uber-surge {
+      font-size: 0.78rem;
+      color: #4ade80;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .uber-leg {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #1e293b;
+    }
+
+    .uber-accept-btn {
+      width: 100%;
+      margin-top: 14px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Painéis de Controle à direita */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel p.sub {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn-preset {
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.12s ease, border-color 0.15s ease;
+    }
+
+    .btn-preset:hover {
+      transform: translateY(-1px);
+      border-color: #60a5fa;
+    }
+
+    .btn-preset span {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: #090d16;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      height: 110px;
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: #38bdf8;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.83rem;
+      padding: 12px;
+      resize: vertical;
+    }
+
+    .evidence-box {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge-engine">🔬 Engenharia Reversa Real: Rota Pro v1.1.64 (`receita_android.json` + `RotaAccessibilityService`)</div>
+      <h1>🚦 Semáforo Uber & 99 — Versão de Teste Interativa</h1>
+      <p>Teste em tempo real o semáforo pequeno (🟢 Verde, 🟡 Amarelo, 🔴 Vermelho) com as mesmas expressões regulares extraídas do APK.</p>
+    </header>
+
+    <div class="grid">
+      <!-- COLUNA ESQUERDA: TELA DO CELULAR COM O SEMÁFORO FLUTUANTE -->
+      <div>
+        <div class="phone-frame">
+          <div class="map-bg"></div>
+          <div class="route-line"></div>
+
+          <div>
+            <div class="status-bar">
+              <span>07:58</span>
+              <span>Uber Driver • Online</span>
+              <span>5G 98%</span>
+            </div>
+
+            <!-- PÍLULA DO SEMÁFORO PEQUENO -->
+            <div id="semaphoreOverlay" class="floating-semaphore">
+              <div id="semaphoreDot" class="semaphore-dot"></div>
+              <div class="semaphore-info">
+                <div id="semaphoreStatus" class="semaphore-status">VALE A PENA • ★ 4.94</div>
+                <div id="semaphorePrimary" class="semaphore-primary">R$ 2,92/km • R$ 78/h</div>
+                <div id="semaphoreSecondary" class="semaphore-secondary">Líq: R$ 18,43 (8,5 km • 19 min)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD DE OFERTA DA UBER NA PARTE INFERIOR -->
+          <div class="uber-offer-card">
+            <div class="uber-tags">
+              <span id="cardCategory" class="uber-category">UberX • Exclusivo</span>
+              <span id="cardRating" class="uber-rating">★ 4,94 (182)</span>
+            </div>
+            <div id="cardPrice" class="uber-price">R$ 24,80</div>
+            <div id="cardSurge" class="uber-surge">+R$ 3,50 incluído</div>
+
+            <div class="uber-leg">
+              <span>🟢</span>
+              <div>
+                <strong id="cardPickup">3 min (1,1 km) de distância</strong>
+                <div style="font-size: 0.76rem; color: #64748b;">Av. Paulista, 1578 - Bela Vista</div>
+              </div>
+            </div>
+
+            <div class="uber-leg">
+              <span>📍</span>
+              <div>
+                <strong id="cardTrip">Viagem de 16 min (7,4 km)</strong>
+                <div id="cardStops" style="font-size: 0.76rem; color: #64748b;">Rua Funchal, 418 - Vila Olímpia</div>
+              </div>
+            </div>
+
+            <button id="cardButton" class="uber-accept-btn">Aceitar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: CONTROLES DO SIMULADOR, PARSER REGEX E METAS -->
+      <div>
+        <div class="panel">
+          <h2>1. Simular Chamadas Reais (Toque para Testar)</h2>
+          <p class="sub">Dispara os mesmos nós de texto que o <code>AccessibilityService</code> lê na tela da Uber e 99:</p>
+
+          <div class="preset-buttons">
+            <button class="btn-preset" onclick="loadScenario('green')">
+              🟢 Corrida Boa (Verde)
+              <span>R$ 24,80 • 8,5 km total • 19 min</span>
+            </button>
+            <button class="btn-preset" onclick="loadScenario('yellow')">
+              🟡 Corrida com Potencial (Amarelo)
+              <span>R$ 16,20 • 9,5 km total • 25 min</span>
+            </button>
+            <button class="btn-preset" onclick="loadScenario('red')">
+              🔴 Corrida Pagando Mal (Vermelho)
+              <span>R$ 9,40 • 9,7 km total • 30 min • Parada</span>
+            </button>
+            <button class="btn-preset" onclick="loadScenario('radar99')">
+              📡 Radar / 99Pop c/ Dinâmico
+              <span>R$ 31,50 • 11,2 km total • 24 min</span>
+            </button>
+          </div>
+
+          <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px; color:#cbd5e1;">
+            Árvore de Texto Capturada pelo <code>AccessibilityNodeInfo</code> (Edite livremente para testar o Parser!):
+          </label>
+          <textarea id="rawNodesInput" oninput="runParserFromTextarea()"></textarea>
+
+          <div id="debugLog" class="evidence-box"></div>
+        </div>
+
+        <div class="panel">
+          <h2>2. Configurar Metas do Motorista</h2>
+          <p class="sub">Altere os limites para ver o semáforo mudar de cor instantaneamente:</p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>🟢 Verde: Mín R$/km</label>
+              <input type="number" id="thGreenKm" step="0.10" value="2.00" oninput="runParserFromTextarea()" />
+            </div>
+            <div class="field">
+              <label>🟢 Verde: Mín R$/hora</label>
+              <input type="number" id="thGreenHour" step="1" value="45" oninput="runParserFromTextarea()" />
+            </div>
+            <div class="field">
+              <label>🟡 Amarelo: Mín R$/km</label>
+              <input type="number" id="thYellowKm" step="0.10" value="1.50" oninput="runParserFromTextarea()" />
+            </div>
+            <div class="field">
+              <label>🟡 Amarelo: Mín R$/hora</label>
+              <input type="number" id="thYellowHour" step="1" value="32" oninput="runParserFromTextarea()" />
+            </div>
+            <div class="field">
+              <label>⛽ Custo do Carro (R$/km)</label>
+              <input type="number" id="thCostKm" step="0.05" value="0.75" oninput="runParserFromTextarea()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- PAINEL 3: CONTROLE DE GASTOS DO FIAT ARGO 2024/25 VERMELHO (REA) -->
+        <div class="panel" style="border: 1px solid #ef4444; background: linear-gradient(180deg, #1a0b12 0%, #111827 100%);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+            <h2 style="margin:0; color:#fca5a5;">🚗 Meu Veículo: Fiat Argo 2024/25 • Vermelho</h2>
+            <span style="background:#dc2626; color:#fff; font-size:0.74rem; font-weight:700; padding:4px 10px; border-radius:999px;">Módulo REA: Combustível & Peças</span>
+          </div>
+          <p class="sub">Controle completo de abastecimentos (crédito/débito, litros, odômetro) e histórico de peças trocadas (peça, mão de obra, mecânico e onde comprou):</p>
+
+          <!-- Resumo Consolidado do Argo -->
+          <div id="argoSummaryBox" class="evidence-box" style="margin-bottom:14px; border-color:#ef4444; color:#f8fafc;"></div>
+
+          <button onclick="applyArgoRealCost()" style="width:100%; background:#059669; color:#fff; border:none; border-radius:10px; padding:10px; font-weight:700; cursor:pointer; margin-bottom:16px;">
+            ⚡ Aplicar Custo Real Calculado do Argo (R$/km) no Semáforo
+          </button>
+
+          <!-- Formulário 1: Abastecimento -->
+          <div style="background:#090d16; border:1px solid #1e293b; border-radius:12px; padding:14px; margin-bottom:14px;">
+            <h3 style="font-size:0.95rem; color:#fff; margin-bottom:10px;">⛽ 1. Registrar Abastecimento (Todas as vezes que abastecer)</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label>📍 Quilometragem (Odômetro km)</label>
+                <input type="number" id="fOdo" placeholder="Ex: 28500" value="28500" />
+              </div>
+              <div class="field">
+                <label>💵 Quanto vai abastecer (R$)</label>
+                <input type="number" id="fTotal" step="0.01" placeholder="Ex: 150.00" value="176.70" oninput="previewLiters()" />
+              </div>
+              <div class="field">
+                <label>⛽ Tipo de Combustível</label>
+                <select id="fType" style="width:100%; background:#0b0f19; border:1px solid #334155; color:#fff; padding:9px; border-radius:8px;">
+                  <option value="Gasolina Comum">Gasolina Comum</option>
+                  <option value="Gasolina Aditivada">Gasolina Aditivada</option>
+                  <option value="Etanol">Etanol</option>
+                  <option value="GNV">GNV</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>🏷️ Valor do Litro (R$/L)</label>
+                <input type="number" id="fPriceL" step="0.01" placeholder="Ex: 5.89" value="5.89" oninput="previewLiters()" />
+              </div>
+              <div class="field">
+                <label>💳 Pagou no Crédito ou Débito?</label>
+                <select id="fPay" style="width:100%; background:#0b0f19; border:1px solid #334155; color:#fff; padding:9px; border-radius:8px;">
+                  <option value="Crédito">💳 Crédito</option>
+                  <option value="Débito">💳 Débito</option>
+                  <option value="PIX / Dinheiro">💠 PIX / Dinheiro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>📅 Data do Abastecimento</label>
+                <input type="text" id="fDate" value="26/10/2026" />
+              </div>
+            </div>
+            <div id="fLitersPreview" style="font-size:0.82rem; color:#38bdf8; font-weight:700; margin:10px 0;">💧 Volume calculado: 30,00 Litros</div>
+            <button onclick="addFuel()" style="width:100%; background:#dc2626; color:#fff; border:none; border-radius:8px; padding:10px; font-weight:700; cursor:pointer;">
+              + Salvar Abastecimento no Argo
+            </button>
+            <div id="fuelListHtml" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <!-- Formulário 2: Troca de Peças / Manutenção -->
+          <div style="background:#090d16; border:1px solid #1e293b; border-radius:12px; padding:14px;">
+            <h3 style="font-size:0.95rem; color:#fff; margin-bottom:10px;">🔧 2. Peças do Veículo Já Trocadas & Manutenção</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label>🔩 Qual peça foi trocada?</label>
+                <input type="text" id="mPart" placeholder="Ex: Pastilha de Freio" value="Pastilha de Freio Dianteira" />
+              </div>
+              <div class="field">
+                <label>📅 Data da troca</label>
+                <input type="text" id="mDate" value="20/10/2026" />
+              </div>
+              <div class="field">
+                <label>👨‍🔧 Feita por quem? (Mecânico/Oficina)</label>
+                <input type="text" id="mWho" placeholder="Ex: Oficina do João" value="Oficina Mestre João" />
+              </div>
+              <div class="field">
+                <label>🏪 Onde comprou a peça?</label>
+                <input type="text" id="mWhere" placeholder="Ex: Mercado Livre / AutoZone" value="Mercado Livre (Loja Oficial)" />
+              </div>
+              <div class="field">
+                <label>🏷️ Valor da Peça (R$)</label>
+                <input type="number" id="mPartCost" step="0.01" value="220.00" oninput="previewMaintTotal()" />
+              </div>
+              <div class="field">
+                <label>🛠️ Valor da Mão de Obra (R$)</label>
+                <input type="number" id="mLaborCost" step="0.01" value="110.00" oninput="previewMaintTotal()" />
+              </div>
+              <div class="field">
+                <label>💳 Forma de Pagamento</label>
+                <select id="mPay" style="width:100%; background:#0b0f19; border:1px solid #334155; color:#fff; padding:9px; border-radius:8px;">
+                  <option value="Crédito">💳 Crédito</option>
+                  <option value="Débito">💳 Débito</option>
+                  <option value="PIX / Dinheiro">💠 PIX / Dinheiro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>📍 Quilometragem na troca (km)</label>
+                <input type="number" id="mOdo" value="28100" />
+              </div>
+            </div>
+            <div id="mTotalPreview" style="font-size:0.82rem; color:#10b981; font-weight:700; margin:10px 0;">💰 Total do Serviço (Peça + Mão de Obra): R$ 330,00</div>
+            <button onclick="addMaint()" style="width:100%; background:#2563eb; color:#fff; border:none; border-radius:8px; padding:10px; font-weight:700; cursor:pointer;">
+              + Salvar Peça Trocada no Argo
+            </button>
+            <div id="maintListHtml" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCENARIOS = {
+      green: [
+        "UberX • Exclusivo",
+        "4,94 (182)",
+        "R$ 24,80",
+        "+R$ 3,50 incluído",
+        "3 min (1,1 km) de distância",
+        "Viagem de 16 min (7,4 km)",
+        "Aceitar"
+      ],
+      yellow: [
+        "UberX",
+        "4,85 (94)",
+        "R$ 16,20",
+        "5 min (1,8 km) de distância",
+        "Viagem de 20 min (7,7 km)",
+        "Aceitar"
+      ],
+      red: [
+        "UberX Poupa",
+        "4,62 (31)",
+        "R$ 9,40",
+        "8 min (2,9 km) de distância",
+        "Viagem de 22 min (6,8 km)",
+        "1 parada(s)",
+        "Aceitar"
+      ],
+      radar99: [
+        "Comfort • Radar",
+        "4,98 (410)",
+        "R$ 31,50",
+        "+R$ 6,00 incluído",
+        "4 min (1,4 km) de distância",
+        "Viagem de 20 min (9,8 km)",
+        "Corresponder"
+      ]
+    };
+
+    function loadScenario(key) {
+      const lines = SCENARIOS[key];
+      document.getElementById("rawNodesInput").value = lines.join("\n");
+      runParserFromTextarea();
+    }
+
+    function runParserFromTextarea() {
+      const rawText = document.getElementById("rawNodesInput").value;
+      const lines = rawText.split("\n").map(l => l.trim()).filter(Boolean);
+      const fullText = lines.join(" | ");
+
+      // 1. Limpa bônus "+R$ 3,50 incluído" e tarifas "/km" (exatamente como `uber.priceCleanIncluido` do Rota Pro)
+      let cleanedPriceText = fullText
+        .replace(/\+?\s*R\$\s*\d{1,6}(?:[.,]\d{1,2})?\s*inclu[íi]dos?/gi, " ")
+        .replace(/\+\s*R\$\s*\d{1,6}(?:[.,]\d{1,2})?/gi, " ")
+        .replace(/R\$\s*\d{1,6}(?:[.,]\d{1,2})?\s*\/\s*(?:km|hr|h|hora)/gi, " ");
+
+      // 2. Extrai o preço principal
+      const priceMatches = [...cleanedPriceText.matchAll(/R\$\s*(\d{1,4}[.,]\d{2})/gi)]
+        .map(m => parseFloat(m[1].replace(".", "").replace(",", ".")))
+        .filter(v => v >= 4 && v <= 1500);
+
+      const grossPrice = priceMatches.length ? Math.max(...priceMatches) : 0;
+
+      // 3. Extrai embarque (`a11yuber.pickupRegex`) e viagem (`a11yuber.tripMinRegex`)
+      let pickupMin = 0, pickupKm = 0, tripMin = 0, tripKm = 0;
+
+      const pickupMatch = fullText.match(/(\d{1,3})\s*min\w*\s*\((\d{1,4}(?:[.,]\d{1,2})?)\s*km\)\s*de\s*dist/i);
+      if (pickupMatch) {
+        pickupMin = parseInt(pickupMatch[1], 10);
+        pickupKm = parseFloat(pickupMatch[2].replace(",", "."));
+      }
+
+      const tripMatch = fullText.match(/viagem\s+de\s+(\d{1,3})\s*min\w*\s*\(?(\d{1,4}(?:[.,]\d{1,2})?)\s*km\)?/i);
+      if (tripMatch) {
+        tripMin = parseInt(tripMatch[1], 10);
+        tripKm = parseFloat(tripMatch[2].replace(",", "."));
+      }
+
+      if (pickupKm + tripKm === 0) {
+        const genericLegs = [...fullText.matchAll(/(\d{1,3})\s*min\w*\s*\((\d{1,4}(?:[.,]\d{1,2})?)\s*km\)/gi)];
+        if (genericLegs[0]) {
+          pickupMin = parseInt(genericLegs[0][1], 10);
+          pickupKm = parseFloat(genericLegs[0][2].replace(",", "."));
+        }
+        if (genericLegs[1]) {
+          tripMin = parseInt(genericLegs[1][1], 10);
+          tripKm = parseFloat(genericLegs[1][2].replace(",", "."));
+        }
+      }
+
+      const totalKm = Math.max(0.1, pickupKm + tripKm);
+      const totalMin = Math.max(1, pickupMin + tripMin);
+
+      // 4. Metadados: Nota, Paradas, Radar
+      const ratingMatch = fullText.match(/([345][.,]\d{2})\s*\(\d+\)/);
+      const rating = ratingMatch ? ratingMatch[1].replace(".", ",") : null;
+      const hasStops = /paradas?(?:\(s\))?/i.test(fullText);
+      const isRadar = /selecionar|corresponder/i.test(fullText);
+
+      // 5. Cálculo financeiro e classificação do Semáforo
+      const greenKm = parseFloat(document.getElementById("thGreenKm").value) || 2.0;
+      const greenHour = parseFloat(document.getElementById("thGreenHour").value) || 45.0;
+      const yellowKm = parseFloat(document.getElementById("thYellowKm").value) || 1.5;
+      const yellowHour = parseFloat(document.getElementById("thYellowHour").value) || 32.0;
+      const costKm = parseFloat(document.getElementById("thCostKm").value) || 0.75;
+
+      const perKm = grossPrice / totalKm;
+      const perHour = (grossPrice / totalMin) * 60;
+      const netProfit = grossPrice - (totalKm * costKm);
+
+      let statusLabel = "PAGANDO MAL";
+      let colorHex = "#ef4444";
+
+      if ((perKm >= greenKm && perHour >= greenHour) || (perKm >= greenKm * 1.25 && perHour >= yellowHour)) {
+        statusLabel = "VALE A PENA";
+        colorHex = "#10b981";
+      } else if (
+        (perKm >= yellowKm && perHour >= yellowHour * 0.85) ||
+        (perHour >= greenHour && perKm >= yellowKm * 0.90)
+      ) {
+        statusLabel = "TEM POTENCIAL";
+        colorHex = "#f59e0b";
+      }
+
+      // Atualiza Semáforo Flutuante
+      const overlay = document.getElementById("semaphoreOverlay");
+      const dot = document.getElementById("semaphoreDot");
+      const statusEl = document.getElementById("semaphoreStatus");
+      const primaryEl = document.getElementById("semaphorePrimary");
+      const secondaryEl = document.getElementById("semaphoreSecondary");
+
+      overlay.style.borderColor = colorHex;
+      dot.style.background = colorHex;
+      dot.style.boxShadow = `0 0 16px ${colorHex}`;
+
+      const badges = [statusLabel];
+      if (isRadar) badges.push("📡 RADAR");
+      if (hasStops) badges.push("⚠️ PARADA");
+      if (rating) badges.push(`★ ${rating}`);
+
+      statusEl.textContent = badges.join(" • ");
+      statusEl.style.color = colorHex;
+
+      primaryEl.textContent = `R$ ${perKm.toFixed(2).replace(".", ",")}/km  •  R$ ${Math.round(perHour)}/h`;
+      secondaryEl.textContent = `Líq: R$ ${netProfit.toFixed(2).replace(".", ",")}  (${totalKm.toFixed(1).replace(".", ",")} km • ${totalMin} min)`;
+
+      // Atualiza Card Mock da Uber
+      document.getElementById("cardCategory").textContent = lines[0] || "UberX";
+      document.getElementById("cardRating").textContent = rating ? `★ ${rating}` : "★ 4,90";
+      document.getElementById("cardPrice").textContent = `R$ ${grossPrice.toFixed(2).replace(".", ",")}`;
+      document.getElementById("cardSurge").textContent = fullText.includes("incluído") ? "+ Dinâmico incluído (filtrado do cálculo duplicado)" : "Tarifa padrão";
+      document.getElementById("cardPickup").textContent = `${pickupMin} min (${pickupKm.toFixed(1).replace(".", ",")} km) de distância`;
+      document.getElementById("cardTrip").textContent = `Viagem de ${tripMin} min (${tripKm.toFixed(1).replace(".", ",")} km)`;
+      document.getElementById("cardStops").textContent = hasStops ? "⚠️ Contém parada intermediária!" : "Viagem direta sem paradas";
+      document.getElementById("cardButton").textContent = isRadar ? "Corresponder (Radar)" : "Aceitar";
+
+      // Log de diagnóstico
+      document.getElementById("debugLog").textContent =
+        `[Diagnóstico do Parser — receita_android.json]\n` +
+        `• Preço Principal Extraído: R$ ${grossPrice.toFixed(2)} (Bônus ignorado: ${fullText.includes("incluído") ? "Sim" : "Não"})\n` +
+        `• Embarque: ${pickupKm.toFixed(1)} km (${pickupMin} min) | Viagem: ${tripKm.toFixed(1)} km (${tripMin} min)\n` +
+        `• Total: ${totalKm.toFixed(1)} km e ${totalMin} min -> R$ ${perKm.toFixed(2)}/km | R$ ${perHour.toFixed(2)}/h | Custo: R$ ${(totalKm * costKm).toFixed(2)}`;
+    }
+
+    // Inicia com o cenário Verde
+    loadScenario("green");
+
+    // --- Controle REA de Gastos do Fiat Argo 2024/25 Vermelho ---
+    let argoFuels = JSON.parse(localStorage.getItem("argo_24_25_fuels") || "null") || [
+      { id: 1, date: "18/10/2026", odo: 28000, total: 176.70, type: "Gasolina Comum", priceL: 5.89, pay: "Crédito" },
+      { id: 2, date: "25/10/2026", odo: 28410, total: 165.00, type: "Gasolina Comum", priceL: 5.89, pay: "Débito" }
+    ];
+    let argoMaints = JSON.parse(localStorage.getItem("argo_24_25_maints") || "null") || [
+      { id: 101, part: "Troca de Óleo 0W20 + Filtro", date: "10/10/2026", who: "Concessionária Fiat", where: "Concessionária Fiat", partCost: 215.00, laborCost: 95.00, pay: "Crédito", odo: 27800 }
+    ];
+    let lastCalculatedRealCostKm = 0.75;
+
+    function previewLiters() {
+      const total = parseFloat(document.getElementById("fTotal").value) || 0;
+      const priceL = parseFloat(document.getElementById("fPriceL").value) || 0;
+      const el = document.getElementById("fLitersPreview");
+      if (total > 0 && priceL > 0) {
+        el.textContent = `💧 Volume calculado: ${(total / priceL).toFixed(2).replace(".", ",")} Litros`;
+      } else {
+        el.textContent = "💧 Informe o valor total e o preço por litro";
+      }
+    }
+
+    function previewMaintTotal() {
+      const p = parseFloat(document.getElementById("mPartCost").value) || 0;
+      const l = parseFloat(document.getElementById("mLaborCost").value) || 0;
+      document.getElementById("mTotalPreview").textContent =
+        `💰 Total do Serviço (Peça + Mão de Obra): R$ ${(p + l).toFixed(2).replace(".", ",")}`;
+    }
+
+    function addFuel() {
+      const odo = parseFloat(document.getElementById("fOdo").value) || 0;
+      const total = parseFloat(document.getElementById("fTotal").value) || 0;
+      const priceL = parseFloat(document.getElementById("fPriceL").value) || 0;
+      const type = document.getElementById("fType").value;
+      const pay = document.getElementById("fPay").value;
+      const date = document.getElementById("fDate").value || "Hoje";
+      if (odo <= 0 || total <= 0 || priceL <= 0) return;
+      argoFuels.unshift({ id: Date.now(), date, odo, total, type, priceL, pay });
+      localStorage.setItem("argo_24_25_fuels", JSON.stringify(argoFuels));
+      renderArgoSummary();
+    }
+
+    function removeFuel(id) {
+      argoFuels = argoFuels.filter(x => x.id !== id);
+      localStorage.setItem("argo_24_25_fuels", JSON.stringify(argoFuels));
+      renderArgoSummary();
+    }
+
+    function addMaint() {
+      const part = document.getElementById("mPart").value.trim();
+      const date = document.getElementById("mDate").value.trim() || "Hoje";
+      const who = document.getElementById("mWho").value.trim() || "Não informado";
+      const where = document.getElementById("mWhere").value.trim() || "Não informado";
+      const partCost = parseFloat(document.getElementById("mPartCost").value) || 0;
+      const laborCost = parseFloat(document.getElementById("mLaborCost").value) || 0;
+      const pay = document.getElementById("mPay").value;
+      const odo = parseFloat(document.getElementById("mOdo").value) || 0;
+      if (!part || (partCost + laborCost <= 0)) return;
+      argoMaints.unshift({ id: Date.now(), part, date, who, where, partCost, laborCost, pay, odo });
+      localStorage.setItem("argo_24_25_maints", JSON.stringify(argoMaints));
+      renderArgoSummary();
+    }
+
+    function removeMaint(id) {
+      argoMaints = argoMaints.filter(x => x.id !== id);
+      localStorage.setItem("argo_24_25_maints", JSON.stringify(argoMaints));
+      renderArgoSummary();
+    }
+
+    function renderArgoSummary() {
+      const totalFuel = argoFuels.reduce((s, r) => s + r.total, 0);
+      const totalLiters = argoFuels.reduce((s, r) => s + (r.total / r.priceL), 0);
+      const fuelCred = argoFuels.filter(r => r.pay === "Crédito").reduce((s, r) => s + r.total, 0);
+      const fuelDeb = argoFuels.filter(r => r.pay === "Débito").reduce((s, r) => s + r.total, 0);
+
+      const totalParts = argoMaints.reduce((s, m) => s + m.partCost, 0);
+      const totalLabor = argoMaints.reduce((s, m) => s + m.laborCost, 0);
+      const totalMaint = totalParts + totalLabor;
+      const maintCred = argoMaints.filter(m => m.pay === "Crédito").reduce((s, m) => s + m.partCost + m.laborCost, 0);
+      const maintDeb = argoMaints.filter(m => m.pay === "Débito").reduce((s, m) => s + m.partCost + m.laborCost, 0);
+
+      const odos = [...argoFuels.map(f => f.odo), ...argoMaints.map(m => m.odo)].filter(v => v > 0);
+      const maxOdo = odos.length ? Math.max(...odos) : 0;
+      const minOdo = odos.length ? Math.min(...odos) : 0;
+      const spanKm = Math.max(0, maxOdo - minOdo);
+      const effectiveKm = spanKm > 0 ? spanKm : (totalLiters * 12.8);
+
+      const fuelCostKm = effectiveKm > 0 ? (totalFuel / effectiveKm) : 0.48;
+      const maintCostKm = totalMaint / Math.max(effectiveKm, 10000);
+      lastCalculatedRealCostKm = Math.max(0.10, fuelCostKm + maintCostKm);
+
+      document.getElementById("argoSummaryBox").textContent =
+        `[🚗 Fiat Argo 2024/25 • Vermelho — Balanço Financeiro REA]\n` +
+        `• Odômetro Atual: ${maxOdo} km | Total Combustível: R$ ${totalFuel.toFixed(2)} (${totalLiters.toFixed(1)} L)\n` +
+        `• Total Manutenção: R$ ${totalMaint.toFixed(2)} (Peças: R$ ${totalParts.toFixed(2)} + Mão de Obra: R$ ${totalLabor.toFixed(2)})\n` +
+        `• Pagamentos -> 💳 Crédito: R$ ${(fuelCred + maintCred).toFixed(2)} | 💳 Débito: R$ ${(fuelDeb + maintDeb).toFixed(2)}\n` +
+        `• Custo Real Calculado: R$ ${lastCalculatedRealCostKm.toFixed(2)}/km (Combustível R$ ${fuelCostKm.toFixed(2)}/km + Manutenção R$ ${maintCostKm.toFixed(2)}/km)`;
+
+      document.getElementById("fuelListHtml").innerHTML = argoFuels.map(r => `
+        <div style="background:#111827; border:1px solid #1e293b; border-radius:8px; padding:8px 10px; font-size:0.78rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong style="color:#fff;">⛽ ${r.type} • R$ ${r.total.toFixed(2)} (${r.pay})</strong>
+            <div style="color:#94a3b8;">📅 ${r.date} • 📍 ${r.odo} km • 💧 ${(r.total / r.priceL).toFixed(2)} L a R$ ${r.priceL.toFixed(2)}/L</div>
+          </div>
+          <button onclick="removeFuel(${r.id})" style="background:none; border:none; color:#f43f5e; cursor:pointer; font-weight:700;">✕</button>
+        </div>
+      `).join("");
+
+      document.getElementById("maintListHtml").innerHTML = argoMaints.map(m => `
+        <div style="background:#111827; border:1px solid #1e293b; border-radius:8px; padding:8px 10px; font-size:0.78rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong style="color:#38bdf8;">🔩 ${m.part} • Total: R$ ${(m.partCost + m.laborCost).toFixed(2)} (${m.pay})</strong>
+            <div style="color:#10b981;">🏷️ Peça: R$ ${m.partCost.toFixed(2)} + 🛠️ Mão de Obra: R$ ${m.laborCost.toFixed(2)}</div>
+            <div style="color:#94a3b8;">📅 ${m.date} • 📍 ${m.odo} km • 👨‍🔧 Trocado por: ${m.who} • 🏪 Comprou em: ${m.where}</div>
+          </div>
+          <button onclick="removeMaint(${m.id})" style="background:none; border:none; color:#f43f5e; cursor:pointer; font-weight:700;">✕</button>
+        </div>
+      `).join("");
+    }
+
+    function applyArgoRealCost() {
+      document.getElementById("thCostKm").value = lastCalculatedRealCostKm.toFixed(2);
+      runParserFromTextarea();
+    }
+
+    renderArgoSummary();
+  </script>
+</body>
+</html>
