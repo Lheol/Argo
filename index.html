@@ -650,17 +650,20 @@
        ===================================================================== -->
   <div class="phone-shell">
 
-    <!-- Topo super limpo -->
+    <!-- Topo super limpo (Toque no KM para abrir o Marcador de Quilometragem) -->
     <header class="app-topbar">
-      <div class="topbar-car">
+      <div class="topbar-car" style="cursor:pointer;" onclick="quickJump('pane-timeline','inOdoMarkerKm')" title="Toque para registrar quilometragem">
         <div class="topbar-badge">🚗</div>
         <div class="topbar-title">
           <strong>Argo 24/25 Vermelho</strong>
-          <span class="mono" id="topOdoText">📍 0 km</span>
+          <span class="mono" id="topOdoText" style="color:#38bdf8; font-weight:700;">📍 0 km ✏️</span>
         </div>
       </div>
 
       <div class="topbar-actions">
+        <button type="button" class="icon-btn" onclick="quickJump('pane-timeline','inOdoMarkerKm')" style="border-color:rgba(56,189,248,0.4); color:#38bdf8;">
+          📍 +KM
+        </button>
         <button type="button" class="icon-btn" onclick="pullFromCloudNow(false)" title="Sincronizar com Google Planilhas">
           <span id="syncDot" class="sync-dot"></span>
           <span id="syncLabel">Nuvem</span>
@@ -894,9 +897,82 @@
     </section>
 
     <!-- ===================================================================
-         ABA 3: LINHA DO TEMPO & RESUMO FINANCEIRO (DRIVVO FEED)
+         ABA 3: MARCADOR DE QUILOMETRAGEM INDEPENDENTE + LINHA DO TEMPO
          =================================================================== -->
     <section id="pane-timeline" class="tab-pane">
+      <!-- Marcador de Quilometragem do Veículo (Independente de Abastecimento) -->
+      <div class="mobile-card" style="border-color:rgba(56,189,248,0.35);">
+        <div class="card-title">
+          <span id="odoFormTitle">📍 Marcador de Quilometragem</span>
+          <small class="mono" id="odoTotalSpanLabel" style="color:#38bdf8;">Rodado: 0 km</small>
+        </div>
+
+        <input type="hidden" id="odoEditId" value="" />
+
+        <!-- Atalhos rápidos +KM sobre o último odômetro -->
+        <div class="chips-scroll">
+          <button type="button" class="chip" onclick="addQuickMarkerOdo(10)">+10 km</button>
+          <button type="button" class="chip" onclick="addQuickMarkerOdo(25)">+25 km</button>
+          <button type="button" class="chip" onclick="addQuickMarkerOdo(50)">+50 km</button>
+          <button type="button" class="chip" onclick="addQuickMarkerOdo(100)">+100 km</button>
+          <button type="button" class="chip" onclick="addQuickMarkerOdo(200)">+200 km</button>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>📍 KM Atual no Painel *</label>
+            <input type="number" id="inOdoMarkerKm" inputmode="numeric" placeholder="Ex: 28650" oninput="updateOdoDeltaPreview()" />
+          </div>
+          <div class="field">
+            <label>📅 Data da Marcação</label>
+            <input type="date" id="inOdoMarkerDate" />
+          </div>
+        </div>
+
+        <div id="odoDeltaHint" style="font-size:0.75rem; color:#38bdf8; margin: -2px 0 10px; font-weight:700;">
+          Digite o KM do painel para registrar no histórico sem precisar abastecer.
+        </div>
+
+        <div class="field">
+          <label>🏷️ Momento / Tipo de Registro</label>
+          <div class="segmented" id="odoTypeGrid">
+            <button type="button" class="seg-btn active-blue" onclick="selectOdoType('Início do Dia', this)">🌅 Início Dia</button>
+            <button type="button" class="seg-btn" onclick="selectOdoType('Fim do Dia', this)">🌙 Fim Dia</button>
+            <button type="button" class="seg-btn" onclick="selectOdoType('Viagem / Rota', this)">🛣️ Viagem</button>
+            <button type="button" class="seg-btn" onclick="selectOdoType('Painel Livre', this)">📌 Livre</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>📝 Observação (Opcional)</label>
+          <input type="text" id="inOdoMarkerNotes" placeholder="Ex: Saída para rodar / Chegada em casa" />
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn-primary blue" id="btnSaveOdo" onclick="saveOdoMarker()">
+            📍 Salvar Quilometragem no Histórico
+          </button>
+          <button type="button" class="icon-btn" id="btnCancelOdo" style="display:none; height:auto;" onclick="resetOdoForm()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- Histórico Unificado de KM, Abastecimentos e Peças -->
+      <div class="mobile-card">
+        <div class="card-title">
+          <span>🕒 Histórico de KM & Gastos</span>
+          <select id="filterTimelineType" onchange="renderEverything()" style="background:var(--input); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:8px; font-size:0.75rem;">
+            <option value="ALL">🌟 Tudo</option>
+            <option value="ODO">📍 Só Quilometragem</option>
+            <option value="FUEL">⛽ Só Combustível</option>
+            <option value="MAINT">🔧 Só Peças</option>
+          </select>
+        </div>
+        <div id="timelineContainer" class="feed-list"></div>
+      </div>
+
+      <!-- Resumo Financeiro Compacto -->
       <div class="mobile-card">
         <div class="card-title">
           <span>💳 Resumo Crédito vs. Débito</span>
@@ -929,18 +1005,6 @@
             <strong class="mono" id="legLabor" style="color:#fcd34d; font-size:0.84rem;">R$ 0,00</strong>
           </div>
         </div>
-      </div>
-
-      <div class="mobile-card">
-        <div class="card-title">
-          <span>🕒 Linha do Tempo Completa</span>
-          <select id="filterTimelineType" onchange="renderEverything()" style="background:var(--input); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:8px; font-size:0.75rem;">
-            <option value="ALL">Tudo</option>
-            <option value="FUEL">⛽ Combustível</option>
-            <option value="MAINT">🔧 Peças</option>
-          </select>
-        </div>
-        <div id="timelineContainer" class="feed-list"></div>
       </div>
     </section>
 
@@ -1029,7 +1093,7 @@
     </button>
     <button type="button" class="fab-center" onclick="openQuickSheet()">+</button>
     <button type="button" class="b-tab" data-pane="pane-timeline" onclick="switchPaneById('pane-timeline')">
-      <span class="ico">🕒</span><span>Histórico</span>
+      <span class="ico">📍</span><span>KM/Hist.</span>
     </button>
     <button type="button" class="b-tab" data-pane="pane-tools" onclick="switchPaneById('pane-tools')">
       <span class="ico">⚡</span><span>Flex/Calc</span>
@@ -1048,7 +1112,10 @@
       <button type="button" class="btn-primary" onclick="quickJump('pane-fuel','inFuelOdo')">
         ⛽ Novo Abastecimento
       </button>
-      <button type="button" class="btn-primary blue" onclick="quickJump('pane-maint','inMaintPart')">
+      <button type="button" class="btn-primary blue" onclick="quickJump('pane-timeline','inOdoMarkerKm')">
+        📍 Marcar Quilometragem (Sem Abastecer)
+      </button>
+      <button type="button" class="btn-primary blue" style="background:#1e293b; box-shadow:none;" onclick="quickJump('pane-maint','inMaintPart')">
         🔧 Nova Peça Trocada / Manutenção
       </button>
       <button type="button" class="btn-primary green" onclick="quickJump('pane-tools','flexEthPrice')">
@@ -1116,22 +1183,71 @@
 
     const KEY_FUEL = "argo_2024_25_web_fuels_v1";
     const KEY_MAINT = "argo_2024_25_web_maints_v1";
+    const KEY_ODO = "argo_2024_25_web_odos_v1";
     const KEY_SESSION = "argo_2024_25_session_token_v1";
     const KEY_SHEETS = "argo_2024_25_sheets_cfg_v2";
 
     let selectedFuelType = "Gasolina Comum";
     let selectedFuelPay = "Crédito";
     let selectedMaintPay = "Crédito";
+    let selectedOdoType = "Início do Dia";
     let lastFlexWinner = { fuelType: "Gasolina Comum", priceL: 5.89 };
 
     let fuelRecords = JSON.parse(localStorage.getItem(KEY_FUEL) || "[]");
     let maintRecords = JSON.parse(localStorage.getItem(KEY_MAINT) || "[]");
+    let odoRecords = JSON.parse(localStorage.getItem(KEY_ODO) || "[]");
     let sheetsConfig = JSON.parse(localStorage.getItem(KEY_SHEETS) || '{"webhookUrl":"","lastSync":""}');
     if (!sheetsConfig.webhookUrl) {
       sheetsConfig.webhookUrl = DEFAULT_WEBHOOK_URL;
       localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
     }
     let activeSession = JSON.parse(localStorage.getItem(KEY_SESSION) || sessionStorage.getItem(KEY_SESSION) || "null");
+
+    // Separa os registros de Peças dos registros de Quilometragem Independente ([KM]) vindos da nuvem
+    function unpackCloudMaintAndOdo(cloudMaints) {
+      if (!Array.isArray(cloudMaints)) return;
+      const pureMaints = [];
+      const cloudOdos = [];
+      cloudMaints.forEach(m => {
+        const pName = String(m.partName || "");
+        if (pName.indexOf("[KM]") === 0) {
+          cloudOdos.push({
+            id: m.id,
+            dateIso: m.dateIso || "",
+            dateBr: m.dateBr || "",
+            odometerKm: Number(m.odometerKm || 0),
+            markerType: pName.replace("[KM]", "").trim() || "Painel Livre",
+            notes: m.notes || ""
+          });
+        } else {
+          pureMaints.push(m);
+        }
+      });
+      maintRecords = pureMaints;
+      localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+      if (cloudOdos.length > 0 || odoRecords.length === 0) {
+        odoRecords = cloudOdos.sort((a, b) => b.odometerKm - a.odometerKm || b.id - a.id);
+        localStorage.setItem(KEY_ODO, JSON.stringify(odoRecords));
+      }
+    }
+
+    function packMaintAndOdoForCloud() {
+      const packedOdos = odoRecords.map(o => ({
+        id: o.id,
+        dateIso: o.dateIso,
+        dateBr: o.dateBr,
+        partName: `[KM] ${o.markerType || "Painel Livre"}`,
+        mechanicOrWorkshop: "Marcador Odômetro",
+        whereBought: "-",
+        partCost: 0,
+        laborCost: 0,
+        totalCost: 0,
+        odometerKm: Number(o.odometerKm || 0),
+        paymentMethod: "Odômetro",
+        notes: o.notes || ""
+      }));
+      return [...maintRecords, ...packedOdos];
+    }
 
     async function initAuth() {
       if (activeSession && activeSession.user && activeSession.token && activeSession.token !== "LOCAL_MODE") {
@@ -1191,8 +1307,7 @@
           localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
         }
         if (Array.isArray(data.maintRecords)) {
-          maintRecords = data.maintRecords;
-          localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+          unpackCloudMaintAndOdo(data.maintRecords);
         }
 
         sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
@@ -1275,7 +1390,7 @@
             action: "push",
             token: activeSession.token,
             fuelRecords,
-            maintRecords
+            maintRecords: packMaintAndOdoForCloud()
           })
         });
         const data = await res.json();
@@ -1305,8 +1420,7 @@
             localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
           }
           if (Array.isArray(data.maintRecords)) {
-            maintRecords = data.maintRecords;
-            localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
+            unpackCloudMaintAndOdo(data.maintRecords);
           }
           sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
           localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
@@ -1368,15 +1482,129 @@
       setTimeout(() => { el.style.display = "none"; }, 2400);
     }
 
+    function getAllOdometers() {
+      return [
+        ...fuelRecords.map(r => Number(r.odometerKm || 0)),
+        ...maintRecords.map(m => Number(m.odometerKm || 0)),
+        ...odoRecords.map(o => Number(o.odometerKm || 0))
+      ].filter(v => v > 0);
+    }
+
     function getLatestOdometer() {
-      const allOdos = [...fuelRecords.map(r => Number(r.odometerKm || 0)), ...maintRecords.map(m => Number(m.odometerKm || 0))].filter(v => v > 0);
+      const allOdos = getAllOdometers();
       return allOdos.length ? Math.max(...allOdos) : 0;
+    }
+
+    function getMinOdometer() {
+      const allOdos = getAllOdometers();
+      return allOdos.length ? Math.min(...allOdos) : 0;
     }
 
     function addQuickOdo(deltaKm) {
       const base = parseFloat(document.getElementById("inFuelOdo").value) || getLatestOdometer() || 0;
       document.getElementById("inFuelOdo").value = Math.round(base + deltaKm);
       updateFuelPreview();
+    }
+
+    // Funções do Marcador de Quilometragem Independente
+    function addQuickMarkerOdo(deltaKm) {
+      const base = parseFloat(document.getElementById("inOdoMarkerKm").value) || getLatestOdometer() || 0;
+      document.getElementById("inOdoMarkerKm").value = Math.round(base + deltaKm);
+      updateOdoDeltaPreview();
+    }
+
+    function selectOdoType(type, btn) {
+      selectedOdoType = type;
+      document.querySelectorAll("#odoTypeGrid .seg-btn").forEach(c => c.className = "seg-btn");
+      btn.classList.add("active-blue");
+    }
+
+    function updateOdoDeltaPreview() {
+      const odo = parseFloat(document.getElementById("inOdoMarkerKm").value) || 0;
+      const last = getLatestOdometer();
+      const hint = document.getElementById("odoDeltaHint");
+      if (!hint) return;
+      if (odo > last && last > 0) {
+        hint.textContent = `⚡ +${(odo - last).toLocaleString("pt-BR")} km rodados desde a última marcação (${last.toLocaleString("pt-BR")} km)`;
+      } else if (last > 0) {
+        hint.textContent = `📍 Última quilometragem registrada no Argo: ${last.toLocaleString("pt-BR")} km`;
+      } else {
+        hint.textContent = "Digite o KM do painel para registrar no histórico sem precisar abastecer.";
+      }
+    }
+
+    function saveOdoMarker() {
+      const odo = parseFloat(document.getElementById("inOdoMarkerKm").value) || 0;
+      const dateIso = document.getElementById("inOdoMarkerDate").value || todayIso();
+      const notes = document.getElementById("inOdoMarkerNotes").value.trim();
+      const editId = document.getElementById("odoEditId").value;
+
+      if (odo <= 0) {
+        alert("Informe a quilometragem atual no painel do Argo.");
+        return;
+      }
+
+      const rec = {
+        id: editId ? Number(editId) : Date.now(),
+        dateIso,
+        dateBr: isoToBr(dateIso),
+        odometerKm: odo,
+        markerType: selectedOdoType,
+        notes
+      };
+
+      if (editId) {
+        odoRecords = odoRecords.map(o => o.id === Number(editId) ? rec : o);
+      } else {
+        odoRecords.unshift(rec);
+      }
+
+      odoRecords.sort((a, b) => b.odometerKm - a.odometerKm || b.id - a.id);
+      localStorage.setItem(KEY_ODO, JSON.stringify(odoRecords));
+      resetOdoForm();
+      renderEverything();
+      notifyToast("📍 Quilometragem registrada no histórico!");
+      pushToCloudNow(true);
+    }
+
+    function editOdoMarker(id) {
+      const o = odoRecords.find(x => x.id === id);
+      if (!o) return;
+      switchPaneById("pane-timeline");
+      document.getElementById("odoEditId").value = o.id;
+      document.getElementById("inOdoMarkerKm").value = o.odometerKm;
+      document.getElementById("inOdoMarkerDate").value = o.dateIso || todayIso();
+      document.getElementById("inOdoMarkerNotes").value = o.notes || "";
+      selectedOdoType = o.markerType || "Início do Dia";
+      document.querySelectorAll("#odoTypeGrid .seg-btn").forEach(c => {
+        c.className = "seg-btn";
+        if ((o.markerType || "").includes(c.textContent.replace(/^[^\wÀ-ÿ]+/, "").trim().split(" ")[0])) {
+          c.classList.add("active-blue");
+        }
+      });
+      document.getElementById("odoFormTitle").textContent = "✏️ Editando Quilometragem";
+      document.getElementById("btnSaveOdo").textContent = "💾 Salvar Alteração de KM";
+      document.getElementById("btnCancelOdo").style.display = "inline-flex";
+      updateOdoDeltaPreview();
+    }
+
+    function deleteOdoMarker(id) {
+      if (!confirm("Remover esta marcação de quilometragem?")) return;
+      odoRecords = odoRecords.filter(x => x.id !== id);
+      localStorage.setItem(KEY_ODO, JSON.stringify(odoRecords));
+      renderEverything();
+      pushToCloudNow(true);
+    }
+
+    function resetOdoForm() {
+      document.getElementById("odoEditId").value = "";
+      document.getElementById("inOdoMarkerKm").value = "";
+      document.getElementById("inOdoMarkerNotes").value = "";
+      document.getElementById("inOdoMarkerDate").value = todayIso();
+      document.getElementById("odoFormTitle").textContent = "📍 Marcador de Quilometragem";
+      document.getElementById("btnSaveOdo").textContent = "📍 Salvar Quilometragem no Histórico";
+      document.getElementById("btnCancelOdo").style.display = "none";
+      updateOdoDeltaPreview();
     }
 
     function setQuickFuelAmount(val) {
@@ -1693,6 +1921,8 @@
 
       const grandTotal = totalFuel + totalMaint;
       const maxOdo = getLatestOdometer();
+      const minOdo = getMinOdometer();
+      const totalSpanKm = Math.max(0, maxOdo - minOdo);
 
       // Usa a Média do Argo que o usuário definiu no campo editável
       const avgKmL = Math.max(1, customKmL || 12.8);
@@ -1711,7 +1941,11 @@
       const maintCostKm = totalMaint > 0 ? (totalMaint / Math.max(effectiveKm, 10000)) : 0;
       const realCostKm = (fuelCostKm + maintCostKm) > 0 ? (fuelCostKm + maintCostKm) : 0.75;
 
-      document.getElementById("topOdoText").textContent = `📍 ${maxOdo.toLocaleString("pt-BR")} km`;
+      document.getElementById("topOdoText").textContent = `📍 ${maxOdo.toLocaleString("pt-BR")} km ✏️`;
+      const spanLbl = document.getElementById("odoTotalSpanLabel");
+      if (spanLbl) spanLbl.textContent = `Trecho: +${totalSpanKm.toLocaleString("pt-BR")} km`;
+      updateOdoDeltaPreview();
+
       document.getElementById("heroCostKm").textContent = `R$ ${fmtMoney(realCostKm)}`;
       document.getElementById("kpiGrandTotal").textContent = `R$ ${fmtMoney(grandTotal)}`;
       document.getElementById("kpiFuelTotal").textContent = `R$ ${fmtMoney(totalFuel)}`;
@@ -1780,23 +2014,49 @@
         }).join("");
       }
 
-      // Linha do Tempo Unificada
+      // Linha do Tempo Unificada (Incluindo Marcador de Quilometragem Independente + Cálculo de +KM rodados)
       const tlFilter = document.getElementById("filterTimelineType").value;
       const tlBox = document.getElementById("timelineContainer");
-      const events = [];
-      if (tlFilter === "ALL" || tlFilter === "FUEL") {
-        fuelRecords.forEach(r => events.push({ kind: "FUEL", odo: Number(r.odometerKm || 0), item: r }));
+      const allChrono = [];
+      odoRecords.forEach(o => allChrono.push({ kind: "ODO", odo: Number(o.odometerKm || 0), item: o }));
+      fuelRecords.forEach(r => allChrono.push({ kind: "FUEL", odo: Number(r.odometerKm || 0), item: r }));
+      maintRecords.forEach(m => allChrono.push({ kind: "MAINT", odo: Number(m.odometerKm || 0), item: m }));
+      allChrono.sort((a, b) => a.odo - b.odo);
+
+      // Calcula quantos KM foram rodados entre cada registro consecutivo de odômetro
+      for (let i = 0; i < allChrono.length; i++) {
+        allChrono[i].deltaKm = (i > 0 && allChrono[i].odo > allChrono[i - 1].odo)
+          ? (allChrono[i].odo - allChrono[i - 1].odo)
+          : 0;
       }
-      if (tlFilter === "ALL" || tlFilter === "MAINT") {
-        maintRecords.forEach(m => events.push({ kind: "MAINT", odo: Number(m.odometerKm || 0), item: m }));
-      }
-      events.sort((a, b) => b.odo - a.odo);
+
+      const events = allChrono
+        .filter(ev => tlFilter === "ALL" || ev.kind === tlFilter)
+        .reverse();
 
       if (!events.length) {
-        tlBox.innerHTML = `<div style="color:var(--muted); font-size:0.8rem; text-align:center; padding:12px;">Sem registros no histórico.</div>`;
+        tlBox.innerHTML = `<div style="color:var(--muted); font-size:0.8rem; text-align:center; padding:12px;">Sem registros neste filtro.</div>`;
       } else {
         tlBox.innerHTML = events.map(ev => {
-          if (ev.kind === "FUEL") {
+          const dTag = ev.deltaKm > 0 ? ` (+${ev.deltaKm.toLocaleString("pt-BR")} km)` : "";
+          if (ev.kind === "ODO") {
+            const o = ev.item;
+            return `
+              <div class="feed-item" onclick="editOdoMarker(${o.id})">
+                <div class="feed-left">
+                  <div class="feed-ico" style="background:rgba(56,189,248,0.16); color:#38bdf8;">📍</div>
+                  <div class="feed-info">
+                    <strong>${Number(o.odometerKm).toLocaleString("pt-BR")} km • ${o.markerType || "Odômetro"}</strong>
+                    <span>${o.dateBr}${o.notes ? ` • ${o.notes}` : ""}</span>
+                  </div>
+                </div>
+                <div class="feed-right">
+                  <strong class="mono" style="color:#38bdf8;">${ev.deltaKm > 0 ? `+${ev.deltaKm.toLocaleString("pt-BR")} km` : "Marcação"}</strong>
+                  <span class="pay-tag pay-cred" onclick="event.stopPropagation(); deleteOdoMarker(${o.id});">✕ Excluir</span>
+                </div>
+              </div>
+            `;
+          } else if (ev.kind === "FUEL") {
             const r = ev.item;
             return `
               <div class="feed-item" onclick="editFuel(${r.id})">
@@ -1804,7 +2064,7 @@
                   <div class="feed-ico fuel">⛽</div>
                   <div class="feed-info">
                     <strong>${r.fuelType}</strong>
-                    <span>${r.dateBr} • ${Number(r.odometerKm).toLocaleString("pt-BR")} km</span>
+                    <span>${r.dateBr} • ${Number(r.odometerKm).toLocaleString("pt-BR")} km${dTag}</span>
                   </div>
                 </div>
                 <div class="feed-right">
@@ -1822,7 +2082,7 @@
                   <div class="feed-ico maint">🔧</div>
                   <div class="feed-info">
                     <strong>${m.partName}</strong>
-                    <span>${m.dateBr} • ${m.mechanicOrWorkshop}</span>
+                    <span>${m.dateBr} • ${Number(m.odometerKm || 0).toLocaleString("pt-BR")} km${dTag}</span>
                   </div>
                 </div>
                 <div class="feed-right">
@@ -1865,7 +2125,11 @@
     }
 
     function exportToExcelCsv() {
-      let csv = "\uFEFFData;Km;Valor (R$);Combustivel;Preco/L;Litros;Pagamento;Posto\n";
+      let csv = "\uFEFF=== HISTORICO DE QUILOMETRAGEM ===\nData;Quilometragem (km);Momento/Tipo;Observacao\n";
+      odoRecords.forEach(o => {
+        csv += `${o.dateBr};${o.odometerKm};${o.markerType || "Odômetro"};${o.notes || ""}\n`;
+      });
+      csv += "\n=== ABASTECIMENTOS ===\nData;Km;Valor (R$);Combustivel;Preco/L;Litros;Pagamento;Posto\n";
       fuelRecords.forEach(r => {
         const lit = (r.totalAmountPaid / r.pricePerLiter).toFixed(2).replace(".", ",");
         csv += `${r.dateBr};${r.odometerKm};${String(r.totalAmountPaid).replace(".", ",")};${r.fuelType};${String(r.pricePerLiter).replace(".", ",")};${lit};${r.paymentMethod};${r.stationName || ""}\n`;
@@ -1880,6 +2144,7 @@
 
     document.getElementById("inFuelDate").value = todayIso();
     document.getElementById("inMaintDate").value = todayIso();
+    document.getElementById("inOdoMarkerDate").value = todayIso();
     initAuth();
   </script>
 </body>
