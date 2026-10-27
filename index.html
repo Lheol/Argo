@@ -669,11 +669,23 @@
       </div>
     </header>
 
-    <!-- 3 Indicadores Essenciais em 1 Linha Compacta -->
+    <!-- 3 Indicadores Essenciais em 1 Linha Compacta (Média Argo Editável com 1 Toque) -->
     <div class="summary-strip">
-      <div class="stat-pill">
-        <small>Média Argo</small>
-        <strong class="mono" id="heroKmL" style="color:#38bdf8;">12,8 km/L</strong>
+      <div class="stat-pill" style="border-color:rgba(56,189,248,0.45); cursor:pointer;" onclick="document.getElementById('inCustomKmL').focus()">
+        <small>Média Argo ✏️</small>
+        <div style="display:flex; align-items:center; justify-content:center; gap:3px;">
+          <input
+            type="number"
+            id="inCustomKmL"
+            class="mono"
+            inputmode="decimal"
+            step="0.1"
+            value="12.8"
+            oninput="onCustomKmLChange(this.value)"
+            style="width:54px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.4); border-radius:7px; color:#38bdf8; font-size:0.95rem; font-weight:800; text-align:center; padding:2px 4px; outline:none;"
+          />
+          <span class="mono" style="font-size:0.75rem; font-weight:800; color:#38bdf8;">km/L</span>
+        </div>
       </div>
       <div class="stat-pill">
         <small>Custo / KM</small>
@@ -949,6 +961,16 @@
           <div class="field">
             <label>⛽ Preço Gasolina (R$/L)</label>
             <input type="number" id="flexGasPrice" inputmode="decimal" step="0.01" value="5.89" oninput="calcDrivvoFlex()" />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>🌱 Média no Etanol (km/L)</label>
+            <input type="number" id="flexEthKmL" inputmode="decimal" step="0.1" value="9.0" oninput="calcDrivvoFlex()" />
+          </div>
+          <div class="field">
+            <label>⛽ Média na Gasolina (km/L)</label>
+            <input type="number" id="flexGasKmL" inputmode="decimal" step="0.1" value="12.8" oninput="onCustomKmLChange(this.value)" />
           </div>
         </div>
         <div style="background:var(--input); border:1px solid var(--border); border-radius:14px; padding:12px; margin-bottom:10px;">
@@ -1604,23 +1626,41 @@
       return "pay-pix";
     }
 
+    const KEY_CUSTOM_KML = "argo_2024_25_custom_kml_v1";
+    let customKmL = parseFloat(localStorage.getItem(KEY_CUSTOM_KML) || "12.8") || 12.8;
+
+    function onCustomKmLChange(val) {
+      const parsed = parseFloat(val);
+      if (parsed && parsed > 0) {
+        customKmL = parsed;
+        localStorage.setItem(KEY_CUSTOM_KML, String(customKmL));
+        const topInp = document.getElementById("inCustomKmL");
+        const flexInp = document.getElementById("flexGasKmL");
+        if (topInp && document.activeElement !== topInp) topInp.value = customKmL;
+        if (flexInp && document.activeElement !== flexInp) flexInp.value = customKmL;
+        renderEverything();
+      }
+    }
+
     function calcDrivvoFlex() {
       const ethP = parseFloat(document.getElementById("flexEthPrice").value) || 0;
       const gasP = parseFloat(document.getElementById("flexGasPrice").value) || 0;
-      const costEth = ethP / 9.0;
-      const costGas = gasP / 12.8;
+      const ethK = Math.max(1, parseFloat((document.getElementById("flexEthKmL") || {}).value) || 9.0);
+      const gasK = Math.max(1, parseFloat((document.getElementById("flexGasKmL") || {}).value) || customKmL || 12.8);
+      const costEth = ethP / ethK;
+      const costGas = gasP / gasK;
       const titleEl = document.getElementById("flexWinnerTitle");
       const subEl = document.getElementById("flexWinnerSub");
 
       if (costEth < costGas) {
         titleEl.textContent = "🌱 COMPENSA ABASTECER COM ETANOL";
         titleEl.style.color = "#10b981";
-        subEl.textContent = `Etanol: R$ ${fmtMoney(costEth)}/km vs Gasolina: R$ ${fmtMoney(costGas)}/km`;
+        subEl.textContent = `Etanol: R$ ${fmtMoney(costEth)}/km (${ethK} km/L) vs Gasolina: R$ ${fmtMoney(costGas)}/km (${gasK} km/L)`;
         lastFlexWinner = { fuelType: "Etanol", priceL: ethP };
       } else {
         titleEl.textContent = "⛽ COMPENSA ABASTECER COM GASOLINA";
         titleEl.style.color = "#38bdf8";
-        subEl.textContent = `Gasolina: R$ ${fmtMoney(costGas)}/km vs Etanol: R$ ${fmtMoney(costEth)}/km`;
+        subEl.textContent = `Gasolina: R$ ${fmtMoney(costGas)}/km (${gasK} km/L) vs Etanol: R$ ${fmtMoney(costEth)}/km (${ethK} km/L)`;
         lastFlexWinner = { fuelType: "Gasolina Comum", priceL: gasP };
       }
     }
@@ -1654,21 +1694,24 @@
       const grandTotal = totalFuel + totalMaint;
       const maxOdo = getLatestOdometer();
 
-      const sortedFuels = [...fuelRecords].filter(r => r.odometerKm > 0).sort((a, b) => a.odometerKm - b.odometerKm);
-      let avgKmL = 12.8;
-      if (sortedFuels.length >= 2) {
-        const dKm = sortedFuels[sortedFuels.length - 1].odometerKm - sortedFuels[0].odometerKm;
-        const usedL = sortedFuels.slice(1).reduce((s, r) => s + (r.totalAmountPaid / r.pricePerLiter), 0);
-        if (dKm > 0 && usedL > 0) avgKmL = Math.min(35, Math.max(3, dKm / usedL));
+      // Usa a Média do Argo que o usuário definiu no campo editável
+      const avgKmL = Math.max(1, customKmL || 12.8);
+      const topInp = document.getElementById("inCustomKmL");
+      if (topInp && document.activeElement !== topInp) {
+        topInp.value = avgKmL;
+      }
+      const flexGasInp = document.getElementById("flexGasKmL");
+      if (flexGasInp && document.activeElement !== flexGasInp) {
+        flexGasInp.value = avgKmL;
       }
 
-      const spanKm = sortedFuels.length >= 2 ? (sortedFuels[sortedFuels.length - 1].odometerKm - sortedFuels[0].odometerKm) : (totalLiters * avgKmL);
-      const fuelCostKm = spanKm > 0 ? (totalFuel / spanKm) : 0;
-      const maintCostKm = totalMaint > 0 ? (totalMaint / Math.max(spanKm, 10000)) : 0;
+      const lastPriceL = fuelRecords.length > 0 ? Number(fuelRecords[0].pricePerLiter || 5.89) : 5.89;
+      const effectiveKm = totalLiters > 0 ? (totalLiters * avgKmL) : 0;
+      const fuelCostKm = effectiveKm > 0 ? (totalFuel / effectiveKm) : (lastPriceL / avgKmL);
+      const maintCostKm = totalMaint > 0 ? (totalMaint / Math.max(effectiveKm, 10000)) : 0;
       const realCostKm = (fuelCostKm + maintCostKm) > 0 ? (fuelCostKm + maintCostKm) : 0.75;
 
       document.getElementById("topOdoText").textContent = `📍 ${maxOdo.toLocaleString("pt-BR")} km`;
-      document.getElementById("heroKmL").textContent = `${avgKmL.toFixed(1).replace(".", ",")} km/L`;
       document.getElementById("heroCostKm").textContent = `R$ ${fmtMoney(realCostKm)}`;
       document.getElementById("kpiGrandTotal").textContent = `R$ ${fmtMoney(grandTotal)}`;
       document.getElementById("kpiFuelTotal").textContent = `R$ ${fmtMoney(totalFuel)}`;
