@@ -445,9 +445,9 @@
 
     .nav-bar {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      background: rgba(15, 23, 42, 0.85);
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.88);
       border: 1px solid var(--border-subtle);
       padding: 6px;
       border-radius: 18px;
@@ -457,6 +457,202 @@
       z-index: 80;
       backdrop-filter: blur(20px);
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    /* =====================================================================
+       DRIVVO REA: BARRA INFERIOR MOBILE + BOTÃO FLUTUANTE (+) + LINHA DO TEMPO
+       ===================================================================== */
+    .drivvo-alert-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(225, 29, 72, 0.18));
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      border-left: 4px solid var(--amber);
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.83rem;
+      color: #fde68a;
+    }
+
+    .odo-helper-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 8px 10px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      font-size: 0.75rem;
+      color: #bae6fd;
+    }
+
+    .odo-chip-row {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .odo-chip {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #e0f2fe;
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .odo-chip:hover {
+      background: var(--sky);
+      color: #060912;
+    }
+
+    .drivvo-switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.32);
+      padding: 11px 14px;
+      border-radius: 14px;
+      margin-top: 14px;
+      font-size: 0.84rem;
+      color: #d1fae5;
+      cursor: pointer;
+    }
+
+    .timeline-rail {
+      position: relative;
+      padding-left: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .timeline-rail::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, #ef4444, #38bdf8, rgba(255, 255, 255, 0.1));
+    }
+
+    .timeline-node {
+      position: relative;
+      background: rgba(6, 9, 18, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .timeline-node:hover {
+      border-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -25px;
+      top: 16px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      border: 2px solid #05070e;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    .drivvo-bottom-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+      background: rgba(8, 12, 24, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px 8px env(safe-area-inset-bottom, 8px);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.65);
+    }
+
+    .dock-item {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+
+    .dock-item span.ico {
+      font-size: 1.18rem;
+    }
+
+    .dock-item.active {
+      color: #fff;
+      background: rgba(239, 68, 68, 0.16);
+    }
+
+    .dock-fab {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: -22px;
+      box-shadow: 0 10px 24px rgba(225, 29, 72, 0.65);
+      transition: transform 0.2s;
+    }
+
+    .dock-fab:hover {
+      transform: scale(1.06);
+    }
+
+    .fab-sheet {
+      position: fixed;
+      bottom: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 950;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-radius: 22px;
+      padding: 14px;
+      width: min(92vw, 380px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      display: none;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .nav-tab {
@@ -1023,12 +1219,22 @@
       </div>
     </header>
 
+    <!-- Alerta Inteligente Drivvo (Vencimento por KM ou Data) -->
+    <div id="drivvoAlertBanner" class="drivvo-alert-banner">
+      <div id="drivvoAlertText">⏰ <strong>Alerta Drivvo:</strong> Verifique seus lembretes preventivos do Argo.</div>
+      <button type="button" class="mini-btn" style="background:rgba(245,158,11,0.25); color:#fff; border-color:rgba(245,158,11,0.5);" onclick="switchPaneById('pane-reminders')">
+        Ver Lembretes ➔
+      </button>
+    </div>
+
     <!-- Navegação -->
     <nav class="nav-bar">
-      <button class="nav-tab active" onclick="switchPane('pane-fuel', this)">⛽ Abastecer</button>
-      <button class="nav-tab" onclick="switchPane('pane-maint', this)">🔧 Peças Trocadas</button>
-      <button class="nav-tab" onclick="switchPane('pane-analytics', this)">📊 Financeiro & Planilha</button>
-      <button class="nav-tab" onclick="switchPane('pane-semaforo', this)">🚦 Semáforo Corridas</button>
+      <button class="nav-tab active" data-pane="pane-fuel" onclick="switchPane('pane-fuel', this)">⛽ Abastecer</button>
+      <button class="nav-tab" data-pane="pane-maint" onclick="switchPane('pane-maint', this)">🔧 Peças Trocadas</button>
+      <button class="nav-tab" data-pane="pane-timeline" onclick="switchPane('pane-timeline', this)">🕒 Linha do Tempo</button>
+      <button class="nav-tab" data-pane="pane-reminders" onclick="switchPane('pane-reminders', this)">⏰ Lembretes & Flex</button>
+      <button class="nav-tab" data-pane="pane-analytics" onclick="switchPane('pane-analytics', this)">📊 Relatórios</button>
+      <button class="nav-tab" data-pane="pane-semaforo" onclick="switchPane('pane-semaforo', this)">🚦 Semáforo</button>
     </nav>
 
     <!-- KPIs Globais -->
@@ -1087,23 +1293,50 @@
           <div class="field-box">
             <label>📍 1. Quilometragem atual no painel (km) *</label>
             <input type="number" id="inFuelOdo" step="1" placeholder="Ex: 28500" oninput="updateFuelPreview()" />
+            <div class="odo-helper-bar">
+              <span id="lastOdoHint">Último: <strong>0 km</strong></span>
+              <div class="odo-chip-row">
+                <button type="button" class="odo-chip" onclick="addQuickOdo(50)">+50 km</button>
+                <button type="button" class="odo-chip" onclick="addQuickOdo(100)">+100 km</button>
+                <button type="button" class="odo-chip" onclick="addQuickOdo(200)">+200 km</button>
+                <button type="button" class="odo-chip" onclick="addQuickOdo(350)">+350 km</button>
+              </div>
+            </div>
           </div>
 
           <div class="field-box">
             <label>💵 2. Quanto vai abastecer? (Valor Total R$) *</label>
-            <input type="number" id="inFuelAmount" step="0.01" placeholder="Ex: 150.00" oninput="updateFuelPreview()" />
+            <input type="number" id="inFuelAmount" step="0.01" placeholder="Ex: 150.00" oninput="onDrivvoTriadInput('amount')" />
           </div>
 
           <div class="field-box">
             <label>🏷️ 3. Valor do combustível (Preço por Litro R$/L) *</label>
-            <input type="number" id="inFuelPriceL" step="0.01" placeholder="Ex: 5.89" oninput="updateFuelPreview()" />
+            <input type="number" id="inFuelPriceL" step="0.01" placeholder="Ex: 5.89" oninput="onDrivvoTriadInput('price')" />
+          </div>
+
+          <div class="field-box">
+            <label>💧 Litros na Bomba (Calcula automático estilo Drivvo)</label>
+            <input type="number" id="inFuelLiters" step="0.01" placeholder="Auto: 25.47" oninput="onDrivvoTriadInput('liters')" />
           </div>
 
           <div class="field-box">
             <label>📅 Data do Abastecimento</label>
             <input type="date" id="inFuelDate" />
           </div>
+
+          <div class="field-box">
+            <label>🏪 Posto / Observação (Opcional)</label>
+            <input type="text" id="inFuelStation" placeholder="Ex: Posto Shell / Ipiranga" />
+          </div>
         </div>
+
+        <label class="drivvo-switch-row">
+          <div>
+            <strong>🟢 Está completando o tanque? (Tanque Cheio — Padrão Drivvo)</strong>
+            <div style="font-size:0.75rem; color:#a7f3d0; margin-top:2px;">Permite calcular a média exata (km/L) entre este abastecimento e o anterior.</div>
+          </div>
+          <input type="checkbox" id="inFuelFullTank" checked style="width:20px; height:20px; accent-color:#10b981;" onchange="updateFuelPreview()" />
+        </label>
 
         <div class="field-box" style="margin-top: 15px;">
           <label>⛽ 4. Qual tipo de combustível?</label>
@@ -1136,11 +1369,6 @@
               <span class="icon">💠</span><span>PIX / Dinheiro</span>
             </button>
           </div>
-        </div>
-
-        <div class="field-box" style="margin-top: 15px;">
-          <label>🏪 Posto / Observação (Opcional)</label>
-          <input type="text" id="inFuelStation" placeholder="Ex: Posto Shell / Ipiranga" />
         </div>
 
         <div class="digital-readout">
@@ -1300,6 +1528,100 @@
     </section>
 
     <!-- ===================================================================
+         PAINEL DRIVVO 1: LINHA DO TEMPO CRONOLÓGICA UNIFICADA
+         =================================================================== -->
+    <section id="pane-timeline" class="tab-pane">
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>🕒 Linha do Tempo Drivvo — Fiat Argo 2024/25 Vermelho</h2>
+            <p>Todos os abastecimentos e peças trocadas em uma única visão cronológica intuitiva.</p>
+          </div>
+          <select id="filterTimelineType" onchange="renderEverything()" style="background:var(--bg-input); color:#fff; border:1px solid rgba(255,255,255,0.15); padding:8px 12px; border-radius:10px; font-size:0.81rem;">
+            <option value="ALL">🌟 Tudo (Abastecimentos + Peças)</option>
+            <option value="FUEL">⛽ Somente Abastecimentos</option>
+            <option value="MAINT">🔧 Somente Peças Trocadas</option>
+          </select>
+        </div>
+        <div id="timelineContainer" class="timeline-rail"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         PAINEL DRIVVO 2: LEMBRETES INTELIGENTES & CALCULADORA FLEX
+         =================================================================== -->
+    <section id="pane-reminders" class="tab-pane">
+      <!-- Calculadora Flex Drivvo -->
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>⚖️ Calculadora Flex Inteligente (Padrão Drivvo) — Argo 2024/25</h2>
+            <p>Descubra na hora na bomba se compensa mais <strong>Etanol</strong> ou <strong>Gasolina</strong> considerando o rendimento real do seu Fiat Argo.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field-box">
+            <label>🌱 Preço do Etanol na Bomba (R$/L)</label>
+            <input type="number" id="flexEthPrice" step="0.01" value="3.89" oninput="calcDrivvoFlex()" />
+          </div>
+          <div class="field-box">
+            <label>⛽ Preço da Gasolina na Bomba (R$/L)</label>
+            <input type="number" id="flexGasPrice" step="0.01" value="5.89" oninput="calcDrivvoFlex()" />
+          </div>
+          <div class="field-box">
+            <label>🌱 Consumo do Argo no Etanol (km/L)</label>
+            <input type="number" id="flexEthKmL" step="0.1" value="9.0" oninput="calcDrivvoFlex()" />
+          </div>
+          <div class="field-box">
+            <label>⛽ Consumo do Argo na Gasolina (km/L)</label>
+            <input type="number" id="flexGasKmL" step="0.1" value="12.8" oninput="calcDrivvoFlex()" />
+          </div>
+        </div>
+
+        <div id="flexResultBanner" class="digital-readout" style="border-color:rgba(16,185,129,0.5); border-left-color:var(--emerald); margin-top:16px;">
+          <div>
+            <div id="flexWinnerTitle" style="font-size:1.08rem; font-weight:800; color:var(--emerald);">✅ COMPENSA ABASTECER COM GASOLINA</div>
+            <div id="flexWinnerSub" style="font-size:0.83rem; color:var(--text-secondary); margin-top:3px;">Custo no Etanol: R$ 0,43/km • Custo na Gasolina: R$ 0,46/km</div>
+          </div>
+          <button type="button" class="mini-btn" style="background:var(--emerald); color:#05070e; font-weight:800;" onclick="applyFlexWinnerToFuel()">
+            ⛽ Usar este preço no Abastecimento
+          </button>
+        </div>
+      </div>
+
+      <!-- Lembretes Preventivos por KM ou Data (Estilo Drivvo) -->
+      <div class="glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>⏰ Lembretes de Revisão & Troca de Peças (Por KM ou Data)</h2>
+            <p>O sistema monitora o odômetro atual do seu Argo e avisa quando estiver chegando a hora da próxima troca.</p>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom:14px;">
+          <div class="field-box">
+            <label>🔔 Serviço / Peça para Lembrar</label>
+            <input type="text" id="remTitle" placeholder="Ex: Troca de Óleo 0W20 + Filtro" />
+          </div>
+          <div class="field-box">
+            <label>📍 Avisar com Quantos KM no Painel?</label>
+            <input type="number" id="remTargetKm" step="100" placeholder="Ex: 40000" />
+          </div>
+          <div class="field-box">
+            <label>📅 Ou Avisar na Data Limite</label>
+            <input type="date" id="remTargetDate" />
+          </div>
+        </div>
+        <button type="button" class="btn-glossy emerald" style="margin-bottom:18px;" onclick="addDrivvoReminder()">
+          ⏰ Criar Lembrete Inteligente
+        </button>
+
+        <div id="remindersListContainer" class="record-list"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
          PAINEL 3: FINANCEIRO & PLANILHA GOOGLE
          =================================================================== -->
     <section id="pane-analytics" class="tab-pane">
@@ -1418,6 +1740,41 @@
       </div>
     </section>
   </div>
+
+  <!-- =====================================================================
+       MENU RÁPIDO FLUTUANTE (+) E BARRA INFERIOR MOBILE (PADRÃO DRIVVO)
+       ===================================================================== -->
+  <div id="fabSheet" class="fab-sheet">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:6px; border-bottom:1px solid var(--border-subtle);">
+      <strong style="font-size:0.86rem; color:#fff;">⚡ Ação Rápida Drivvo — Fiat Argo</strong>
+      <button type="button" class="mini-btn" onclick="toggleFabMenu(false)">✕</button>
+    </div>
+    <button type="button" class="btn-glossy" onclick="quickJumpAction('pane-fuel', 'inFuelOdo')">
+      ⛽ Novo Abastecimento
+    </button>
+    <button type="button" class="btn-glossy blue" onclick="quickJumpAction('pane-maint', 'inMaintPart')">
+      🔧 Registrar Peça Trocada / Manutenção
+    </button>
+    <button type="button" class="btn-glossy emerald" onclick="quickJumpAction('pane-reminders', 'flexEthPrice')">
+      ⚖️ Calculadora Flex & Lembretes
+    </button>
+  </div>
+
+  <nav class="drivvo-bottom-dock">
+    <button type="button" class="dock-item active" data-dock="pane-fuel" onclick="switchPaneById('pane-fuel')">
+      <span class="ico">⛽</span><span>Abastecer</span>
+    </button>
+    <button type="button" class="dock-item" data-dock="pane-maint" onclick="switchPaneById('pane-maint')">
+      <span class="ico">🔧</span><span>Peças</span>
+    </button>
+    <button type="button" class="dock-fab" onclick="toggleFabMenu()" title="Adicionar Registro Rápido">+</button>
+    <button type="button" class="dock-item" data-dock="pane-timeline" onclick="switchPaneById('pane-timeline')">
+      <span class="ico">🕒</span><span>Linha Tempo</span>
+    </button>
+    <button type="button" class="dock-item" data-dock="pane-reminders" onclick="switchPaneById('pane-reminders')">
+      <span class="ico">⏰</span><span>Flex/Alertas</span>
+    </button>
+  </nav>
 
   <div id="toastPopup" class="toast-popup">✔ Salvo com sucesso!</div>
 
@@ -1774,15 +2131,88 @@
       setTimeout(() => { el.style.display = "none"; }, 2800);
     }
 
+    const KEY_REMINDERS = "argo_2024_25_drivvo_reminders_v1";
+    let remindersList = JSON.parse(localStorage.getItem(KEY_REMINDERS) || "null") || [
+      { id: 101, title: "🛢️ Troca de Óleo 0W20 Selenia + Filtro", targetKm: 30000, targetDate: "" },
+      { id: 102, title: "🛑 Revisão Pastilhas de Freio Dianteiras", targetKm: 35000, targetDate: "" },
+      { id: 103, title: "📐 Alinhamento e Balanceamento", targetKm: 30000, targetDate: "" }
+    ];
+    let lastFlexWinner = { fuelType: "Gasolina Comum", priceL: 5.89 };
+
     function switchPane(paneId, btn) {
       document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
       document.querySelectorAll(".nav-tab").forEach(b => b.classList.remove("active"));
-      document.getElementById(paneId).classList.add("active");
-      btn.classList.add("active");
+      document.querySelectorAll(".dock-item").forEach(d => {
+        d.classList.toggle("active", d.getAttribute("data-dock") === paneId);
+      });
+      const paneEl = document.getElementById(paneId);
+      if (paneEl) paneEl.classList.add("active");
+      if (btn) {
+        btn.classList.add("active");
+      } else {
+        const navBtn = document.querySelector(`.nav-tab[data-pane="${paneId}"]`);
+        if (navBtn) navBtn.classList.add("active");
+      }
+      toggleFabMenu(false);
+    }
+
+    function switchPaneById(paneId) {
+      switchPane(paneId, null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleFabMenu(forceState) {
+      const sheet = document.getElementById("fabSheet");
+      if (!sheet) return;
+      const show = typeof forceState === "boolean" ? forceState : (sheet.style.display !== "flex");
+      sheet.style.display = show ? "flex" : "none";
+    }
+
+    function quickJumpAction(paneId, focusInputId) {
+      toggleFabMenu(false);
+      switchPaneById(paneId);
+      setTimeout(() => {
+        const el = document.getElementById(focusInputId);
+        if (el) el.focus();
+      }, 180);
+    }
+
+    function getLatestOdometer() {
+      const allOdos = [...fuelRecords.map(r => Number(r.odometerKm || 0)), ...maintRecords.map(m => Number(m.odometerKm || 0))].filter(v => v > 0);
+      return allOdos.length ? Math.max(...allOdos) : 0;
+    }
+
+    function addQuickOdo(deltaKm) {
+      const base = parseFloat(document.getElementById("inFuelOdo").value) || getLatestOdometer() || 0;
+      document.getElementById("inFuelOdo").value = Math.round(base + deltaKm);
+      updateFuelPreview();
     }
 
     function setQuickFuelAmount(val) {
       document.getElementById("inFuelAmount").value = val.toFixed(2);
+      onDrivvoTriadInput("amount");
+    }
+
+    function onDrivvoTriadInput(changedField) {
+      const amountEl = document.getElementById("inFuelAmount");
+      const priceEl = document.getElementById("inFuelPriceL");
+      const litersEl = document.getElementById("inFuelLiters");
+
+      const amount = parseFloat(amountEl.value) || 0;
+      const priceL = parseFloat(priceEl.value) || 0;
+      const liters = parseFloat(litersEl.value) || 0;
+
+      if (changedField === "amount" || changedField === "price") {
+        if (amount > 0 && priceL > 0) {
+          litersEl.value = (amount / priceL).toFixed(2);
+        }
+      } else if (changedField === "liters") {
+        if (liters > 0 && priceL > 0) {
+          amountEl.value = (liters * priceL).toFixed(2);
+        } else if (liters > 0 && amount > 0) {
+          priceEl.value = (amount / liters).toFixed(2);
+        }
+      }
       updateFuelPreview();
     }
 
@@ -1808,17 +2238,105 @@
     function fillQuickPart(name) {
       const el = document.getElementById("inMaintPart");
       el.value = name;
+      const odoEl = document.getElementById("inMaintOdo");
+      if (odoEl && !odoEl.value && getLatestOdometer() > 0) {
+        odoEl.value = getLatestOdometer();
+      }
       el.focus();
     }
 
     function updateFuelPreview() {
+      const odo = parseFloat(document.getElementById("inFuelOdo").value) || 0;
       const amount = parseFloat(document.getElementById("inFuelAmount").value) || 0;
       const priceL = parseFloat(document.getElementById("inFuelPriceL").value) || 0;
-      const liters = (amount > 0 && priceL > 0) ? (amount / priceL) : 0;
+      const liters = (amount > 0 && priceL > 0) ? (amount / priceL) : (parseFloat(document.getElementById("inFuelLiters").value) || 0);
       document.getElementById("fuelCalcLiters").textContent = `${fmtMoney(liters)} Litros (${selectedFuelType})`;
       const baseKmL = selectedFuelType === "Etanol" ? 9.0 : 12.8;
+      const lastOdo = getLatestOdometer();
+      const deltaMsg = (odo > lastOdo && lastOdo > 0)
+        ? ` • Rodou +${(odo - lastOdo).toLocaleString("pt-BR")} km desde o último registro`
+        : "";
       document.getElementById("fuelCalcAutonomy").textContent =
-        liters > 0 ? `Autonomia estimada no Argo: ~${Math.round(liters * baseKmL)} km` : "Informe o valor total e o preço/L";
+        liters > 0 ? `Autonomia estimada: ~${Math.round(liters * baseKmL)} km${deltaMsg}` : "Preencha qualquer par (Valor R$, Preço/L ou Litros)";
+    }
+
+    function calcDrivvoFlex() {
+      const ethP = parseFloat(document.getElementById("flexEthPrice").value) || 0;
+      const gasP = parseFloat(document.getElementById("flexGasPrice").value) || 0;
+      const ethK = Math.max(1, parseFloat(document.getElementById("flexEthKmL").value) || 9.0);
+      const gasK = Math.max(1, parseFloat(document.getElementById("flexGasKmL").value) || 12.8);
+
+      const costEthKm = ethP / ethK;
+      const costGasKm = gasP / gasK;
+      const ratioPct = gasP > 0 ? ((ethP / gasP) * 100) : 0;
+
+      const titleEl = document.getElementById("flexWinnerTitle");
+      const subEl = document.getElementById("flexWinnerSub");
+      const bannerEl = document.getElementById("flexResultBanner");
+
+      if (costEthKm < costGasKm) {
+        const saveTank = Math.max(0, (costGasKm - costEthKm) * 450);
+        titleEl.textContent = `🌱 COMPENSA ABASTECER COM ETANOL (${ratioPct.toFixed(0)}% do preço)`;
+        titleEl.style.color = "#10b981";
+        bannerEl.style.borderLeftColor = "#10b981";
+        subEl.textContent = `Custo Etanol: R$ ${fmtMoney(costEthKm)}/km vs Gasolina: R$ ${fmtMoney(costGasKm)}/km • Economia de ~R$ ${fmtMoney(saveTank)} a cada 450 km`;
+        lastFlexWinner = { fuelType: "Etanol", priceL: ethP };
+      } else {
+        const saveTank = Math.max(0, (costEthKm - costGasKm) * 450);
+        titleEl.textContent = `⛽ COMPENSA ABASTECER COM GASOLINA (${ratioPct.toFixed(0)}% de paridade)`;
+        titleEl.style.color = "#38bdf8";
+        bannerEl.style.borderLeftColor = "#38bdf8";
+        subEl.textContent = `Custo Gasolina: R$ ${fmtMoney(costGasKm)}/km vs Etanol: R$ ${fmtMoney(costEthKm)}/km • Economia de ~R$ ${fmtMoney(saveTank)} a cada 450 km`;
+        lastFlexWinner = { fuelType: "Gasolina Comum", priceL: gasP };
+      }
+    }
+
+    function applyFlexWinnerToFuel() {
+      document.getElementById("inFuelPriceL").value = lastFlexWinner.priceL.toFixed(2);
+      selectedFuelType = lastFlexWinner.fuelType;
+      document.querySelectorAll("#fuelTypeGrid .choice-card").forEach(c => {
+        c.className = "choice-card";
+        if (c.textContent.includes(selectedFuelType)) c.classList.add("active-red");
+      });
+      onDrivvoTriadInput("price");
+      switchPaneById("pane-fuel");
+      notifyToast(`⚡ ${selectedFuelType} (R$ ${fmtMoney(lastFlexWinner.priceL)}/L) aplicado no abastecimento!`);
+    }
+
+    function addDrivvoReminder() {
+      const title = document.getElementById("remTitle").value.trim();
+      const targetKm = parseFloat(document.getElementById("remTargetKm").value) || 0;
+      const targetDate = document.getElementById("remTargetDate").value || "";
+      if (!title || (targetKm <= 0 && !targetDate)) {
+        alert("Informe a peça/serviço e o KM limite (ou data) para o lembrete.");
+        return;
+      }
+      remindersList.unshift({ id: Date.now(), title, targetKm, targetDate });
+      localStorage.setItem(KEY_REMINDERS, JSON.stringify(remindersList));
+      document.getElementById("remTitle").value = "";
+      document.getElementById("remTargetKm").value = "";
+      document.getElementById("remTargetDate").value = "";
+      renderEverything();
+      notifyToast("⏰ Lembrete Drivvo salvo!");
+    }
+
+    function completeReminderToMaint(id) {
+      const rem = remindersList.find(r => r.id === id);
+      if (!rem) return;
+      const cleanName = rem.title.replace(/^[^\wÀ-ÿ]+/, "").trim();
+      document.getElementById("inMaintPart").value = cleanName;
+      if (getLatestOdometer() > 0) document.getElementById("inMaintOdo").value = getLatestOdometer();
+      remindersList = remindersList.filter(r => r.id !== id);
+      localStorage.setItem(KEY_REMINDERS, JSON.stringify(remindersList));
+      renderEverything();
+      switchPaneById("pane-maint");
+      notifyToast("🔧 Preencha os dados da troca realizada!");
+    }
+
+    function deleteReminder(id) {
+      remindersList = remindersList.filter(r => r.id !== id);
+      localStorage.setItem(KEY_REMINDERS, JSON.stringify(remindersList));
+      renderEverything();
     }
 
     function updateMaintPreview() {
@@ -2164,6 +2682,138 @@
           `;
         }).join("");
       }
+
+      // Drivvo: Atualiza dica do último odômetro
+      const lastOdoEl = document.getElementById("lastOdoHint");
+      if (lastOdoEl) {
+        lastOdoEl.innerHTML = `Último odômetro: <strong class="mono">${maxOdo.toLocaleString("pt-BR")} km</strong>`;
+      }
+
+      // Drivvo: Renderiza Linha do Tempo Cronológica Unificada (Abastecimentos + Peças Trocadas)
+      const tlFilter = (document.getElementById("filterTimelineType") || {}).value || "ALL";
+      const tlBox = document.getElementById("timelineContainer");
+      if (tlBox) {
+        const events = [];
+        if (tlFilter === "ALL" || tlFilter === "FUEL") {
+          fuelRecords.forEach(r => events.push({ kind: "FUEL", odo: Number(r.odometerKm || 0), dateIso: r.dateIso || "", item: r }));
+        }
+        if (tlFilter === "ALL" || tlFilter === "MAINT") {
+          maintRecords.forEach(m => events.push({ kind: "MAINT", odo: Number(m.odometerKm || 0), dateIso: m.dateIso || "", item: m }));
+        }
+        events.sort((a, b) => b.odo - a.odo || b.dateIso.localeCompare(a.dateIso));
+
+        if (!events.length) {
+          tlBox.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem; padding:10px 0;">Sua Linha do Tempo Drivvo está vazia. Toque no botão <strong>+</strong> abaixo para registrar um abastecimento ou peça!</div>`;
+        } else {
+          tlBox.innerHTML = events.map(ev => {
+            if (ev.kind === "FUEL") {
+              const r = ev.item;
+              const lit = r.totalAmountPaid / r.pricePerLiter;
+              return `
+                <div class="timeline-node">
+                  <div class="timeline-dot" style="background:#ef4444;">⛽</div>
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                    <div>
+                      <div class="record-header">
+                        <span class="record-title">⛽ Abastecimento • ${r.fuelType}</span>
+                        <span class="mono" style="color:#fda4af; font-weight:800;">R$ ${fmtMoney(r.totalAmountPaid)}</span>
+                        <span class="badge-pay ${badgeClassForPay(r.paymentMethod)}">💳 ${r.paymentMethod}</span>
+                      </div>
+                      <div class="record-details">
+                        📅 <strong>${r.dateBr}</strong> • 📍 <strong class="mono">${Number(r.odometerKm).toLocaleString("pt-BR")} km</strong> • 💧 <strong class="mono">${fmtMoney(lit)} L</strong> (R$ ${fmtMoney(r.pricePerLiter)}/L)
+                      </div>
+                      ${r.stationName ? `<div class="record-sub">🏪 ${r.stationName}</div>` : ""}
+                    </div>
+                    <button class="mini-btn" onclick="switchPaneById('pane-fuel'); editFuel(${r.id});">✏️</button>
+                  </div>
+                </div>
+              `;
+            } else {
+              const m = ev.item;
+              const tot = Number(m.partCost || 0) + Number(m.laborCost || 0);
+              return `
+                <div class="timeline-node">
+                  <div class="timeline-dot" style="background:#38bdf8;">🔧</div>
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                    <div>
+                      <div class="record-header">
+                        <span class="record-title" style="color:var(--sky);">🔩 Peça Trocada • ${m.partName}</span>
+                        <span class="mono" style="color:var(--emerald); font-weight:800;">R$ ${fmtMoney(tot)}</span>
+                        <span class="badge-pay ${badgeClassForPay(m.paymentMethod)}">💳 ${m.paymentMethod}</span>
+                      </div>
+                      <div class="record-details">
+                        📅 <strong>${m.dateBr}</strong> ${m.odometerKm > 0 ? `• 📍 <strong class="mono">${Number(m.odometerKm).toLocaleString("pt-BR")} km</strong>` : ""} • Peça: R$ ${fmtMoney(m.partCost)} + M. Obra: R$ ${fmtMoney(m.laborCost)}
+                      </div>
+                      <div class="record-sub">👨‍🔧 ${m.mechanicOrWorkshop} • 🏪 Comprou em: ${m.whereBought}</div>
+                    </div>
+                    <button class="mini-btn" onclick="switchPaneById('pane-maint'); editMaint(${m.id});">✏️</button>
+                  </div>
+                </div>
+              `;
+            }
+          }).join("");
+        }
+      }
+
+      // Drivvo: Renderiza Lembretes Inteligentes (Por KM ou Data) e Banner de Alerta
+      const remBox = document.getElementById("remindersListContainer");
+      const alertBanner = document.getElementById("drivvoAlertBanner");
+      const alertText = document.getElementById("drivvoAlertText");
+      let urgentCount = 0;
+      let firstUrgentTitle = "";
+
+      if (remBox) {
+        if (!remindersList.length) {
+          remBox.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem;">Nenhum lembrete pendente.</div>`;
+        } else {
+          remBox.innerHTML = remindersList.map(rem => {
+            const kmLeft = rem.targetKm > 0 ? (rem.targetKm - maxOdo) : null;
+            let statusBadge = `<span class="badge-pay badge-debito">🟢 Em dia</span>`;
+            if (kmLeft !== null && maxOdo > 0) {
+              if (kmLeft <= 0) {
+                statusBadge = `<span class="badge-pay" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid #ef4444;">🔴 Vencido há ${Math.abs(kmLeft).toLocaleString("pt-BR")} km!</span>`;
+                urgentCount++;
+                if (!firstUrgentTitle) firstUrgentTitle = rem.title;
+              } else if (kmLeft <= 1000) {
+                statusBadge = `<span class="badge-pay" style="background:rgba(245,158,11,0.22); color:#fde68a; border:1px solid #f59e0b;">🟡 Faltam ${kmLeft.toLocaleString("pt-BR")} km</span>`;
+                urgentCount++;
+                if (!firstUrgentTitle) firstUrgentTitle = rem.title;
+              } else {
+                statusBadge = `<span class="badge-pay badge-debito">🟢 Faltam ${kmLeft.toLocaleString("pt-BR")} km</span>`;
+              }
+            }
+            return `
+              <div class="record-card">
+                <div>
+                  <div class="record-header">
+                    <span class="record-title">${rem.title}</span>
+                    ${statusBadge}
+                  </div>
+                  <div class="record-details">
+                    ${rem.targetKm > 0 ? `📍 Meta de Odômetro: <strong class="mono">${Number(rem.targetKm).toLocaleString("pt-BR")} km</strong> (Atual: ${maxOdo.toLocaleString("pt-BR")} km)` : ""}
+                    ${rem.targetDate ? ` • 📅 Data Limite: <strong>${isoToBr(rem.targetDate)}</strong>` : ""}
+                  </div>
+                </div>
+                <div class="record-btns">
+                  <button class="mini-btn" style="background:rgba(16,185,129,0.2); color:#6ee7b7;" onclick="completeReminderToMaint(${rem.id})">✔ Já Troquei</button>
+                  <button class="mini-btn" style="color:#fda4af;" onclick="deleteReminder(${rem.id})">✕</button>
+                </div>
+              </div>
+            `;
+          }).join("");
+        }
+      }
+
+      if (alertBanner && alertText) {
+        if (urgentCount > 0) {
+          alertBanner.style.display = "flex";
+          alertText.innerHTML = `⏰ <strong>Alerta Preventivo Drivvo (${urgentCount}):</strong> O item <strong>${firstUrgentTitle}</strong> está próximo ou atingiu a quilometragem!`;
+        } else {
+          alertBanner.style.display = "none";
+        }
+      }
+
+      calcDrivvoFlex();
     }
 
     function evaluateRide() {
