@@ -3,291 +3,284 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#090b10" />
+  <meta name="theme-color" content="#07090e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="./manifest.json" />
-  <title>Argo 24/25 • Controle Mobile</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Argo 24/25 • Cockpit Mobile</title>
   <style>
     :root {
-      --bg: #090b10;
-      --card: #121621;
-      --card-soft: #181d2c;
-      --input: #0d1017;
+      --bg: #07090e;
+      --surface: rgba(18, 23, 35, 0.88);
+      --surface-2: #161c2b;
+      --input: #0b0e16;
       --border: rgba(255, 255, 255, 0.08);
+      --border-hi: rgba(255, 255, 255, 0.16);
       --text: #f8fafc;
       --muted: #94a3b8;
       --rosso: #ef4444;
-      --rosso-dark: #b91c1c;
+      --rosso-2: #dc2626;
       --green: #10b981;
       --blue: #3b82f6;
+      --sky: #38bdf8;
       --amber: #f59e0b;
+      --radius: 20px;
+      --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Consolas, monospace;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-sans);
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: var(--bg);
+      background: radial-gradient(circle at 50% -10%, rgba(239, 68, 68, 0.18), transparent 55%), var(--bg);
       color: var(--text);
       min-height: 100dvh;
       display: flex;
       justify-content: center;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .mono {
-      font-family: "JetBrains Mono", monospace;
-    }
+    .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
-    /* =====================================================================
-       SHELL MOBILE (LARGURA DE CELULAR CENTRALIZADA)
-       ===================================================================== */
     .phone-shell {
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
       min-height: 100dvh;
-      padding: 12px 14px 96px;
+      padding: 12px 13px calc(92px + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 11px;
     }
 
-    /* =====================================================================
-       LOGIN MINIMALISTA MOBILE
-       ===================================================================== */
+    /* LOGIN ULTRA-MODERNO */
     #loginOverlay {
       position: fixed;
       inset: 0;
       z-index: 2000;
-      background: radial-gradient(circle at 50% 15%, rgba(239, 68, 68, 0.25) 0%, #090b10 65%);
+      background: radial-gradient(circle at 50% 12%, rgba(239, 68, 68, 0.28), #07090e 65%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
     }
 
     .login-box {
       width: 100%;
-      max-width: 390px;
-      background: var(--card);
+      max-width: 380px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
       border: 1px solid rgba(239, 68, 68, 0.35);
       border-radius: 26px;
-      padding: 28px 22px;
+      padding: 26px 22px;
       text-align: center;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
     }
 
     .car-avatar {
-      width: 68px;
-      height: 68px;
+      width: 64px;
+      height: 64px;
       margin: 0 auto 12px;
       border-radius: 20px;
-      background: linear-gradient(135deg, var(--rosso), var(--rosso-dark));
+      background: linear-gradient(135deg, var(--rosso), #991b1b);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
 
-    .login-box h1 {
-      font-size: 1.35rem;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .login-box p {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
+    .login-box h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; }
+    .login-box p { font-size: 0.78rem; color: var(--muted); margin: 4px 0 16px; }
 
     .login-error-box {
       display: none;
-      background: rgba(239, 68, 68, 0.15);
+      background: rgba(239, 68, 68, 0.16);
       border: 1px solid var(--rosso);
       color: #fecaca;
-      font-size: 0.78rem;
-      padding: 10px 12px;
+      font-size: 0.76rem;
+      padding: 9px 12px;
       border-radius: 12px;
       margin-bottom: 12px;
       text-align: left;
     }
 
-    /* =====================================================================
-       TOPO COMPACTO DO APP (ESTILO NUBANK / DRIVVO)
-       ===================================================================== */
+    /* TOPBAR CARBON GLASS */
     .app-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--card);
+      background: var(--surface);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 10px 14px;
+      padding: 10px 12px;
+      position: sticky;
+      top: 8px;
+      z-index: 90;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
     .topbar-car {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
+      cursor: pointer;
     }
 
     .topbar-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--rosso), var(--rosso-dark));
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--rosso), #991b1b);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      flex-shrink: 0;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
     }
 
     .topbar-title strong {
       display: block;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       font-weight: 800;
-      line-height: 1.1;
+      letter-spacing: -0.01em;
     }
 
     .topbar-title span {
       font-size: 0.72rem;
-      color: var(--muted);
+      color: var(--sky);
+      font-weight: 700;
     }
 
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .topbar-actions { display: flex; align-items: center; gap: 5px; }
 
     .icon-btn {
-      background: var(--card-soft);
+      background: var(--surface-2);
       border: 1px solid var(--border);
       color: var(--text);
-      height: 36px;
-      padding: 0 11px;
-      border-radius: 11px;
-      font-size: 0.76rem;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 10px;
+      font-size: 0.74rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 5px;
       cursor: pointer;
+      transition: transform 0.1s, border-color 0.15s;
     }
 
+    .icon-btn:active { transform: scale(0.95); }
+
     .sync-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--green);
       box-shadow: 0 0 8px var(--green);
     }
 
-    .sync-dot.syncing {
-      background: var(--amber);
-      box-shadow: 0 0 8px var(--amber);
-    }
+    .sync-dot.syncing { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 
-    /* =====================================================================
-       RESUMO COMPACTO (3 MINI PÍLULAS EM 1 LINHA)
-       ===================================================================== */
+    /* KPI STRIP (3 PÍLULAS INTERATIVAS) */
     .summary-strip {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 7px;
     }
 
     .stat-pill {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 10px 10px;
+      padding: 9px 8px;
       text-align: center;
     }
 
     .stat-pill small {
       display: block;
-      font-size: 0.64rem;
+      font-size: 0.62rem;
       font-weight: 700;
       color: var(--muted);
       text-transform: uppercase;
+      letter-spacing: 0.03em;
       margin-bottom: 3px;
     }
 
-    .stat-pill strong {
-      font-size: 0.95rem;
+    .stat-pill strong { font-size: 0.92rem; font-weight: 800; }
+
+    .kml-inline-input {
+      width: 52px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 7px;
+      color: var(--sky);
+      font-size: 0.9rem;
       font-weight: 800;
+      text-align: center;
+      padding: 1px 3px;
+      outline: none;
     }
 
-    /* =====================================================================
-       PAINÉIS E CARDS MOBILE LIMPOS
-       ===================================================================== */
+    /* ABAS E CARDS */
     .tab-pane {
       display: none;
       flex-direction: column;
-      gap: 12px;
-      animation: fade 0.18s ease;
+      gap: 11px;
+      animation: fadeUp 0.16s ease-out;
     }
 
-    .tab-pane.active {
-      display: flex;
-    }
+    .tab-pane.active { display: flex; }
 
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(6px); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .mobile-card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: var(--radius);
+      padding: 15px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
     .card-title {
-      font-size: 0.98rem;
+      font-size: 0.94rem;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 11px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      letter-spacing: -0.01em;
     }
 
-    /* =====================================================================
-       FORMULÁRIOS COMPACTOS DE 2 COLUNAS (SEM POLUIÇÃO)
-       ===================================================================== */
+    /* FORMULÁRIOS MOBILE DE ALTA RESPOSTA */
     .row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 9px;
+      margin-bottom: 9px;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-bottom: 10px;
+      gap: 4px;
+      margin-bottom: 9px;
     }
 
-    .row-2 .field {
-      margin-bottom: 0;
-    }
+    .row-2 .field { margin-bottom: 0; }
 
     .field label {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--muted);
     }
@@ -296,59 +289,54 @@
     .field select {
       width: 100%;
       background: var(--input);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 13px;
-      padding: 12px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 12px;
+      padding: 11px 12px;
       color: #fff;
-      font-size: 0.96rem;
+      font-size: 0.94rem;
       font-weight: 600;
       outline: none;
+      transition: border-color 0.15s;
     }
 
-    .field input:focus {
-      border-color: var(--rosso);
-    }
+    .field input:focus { border-color: var(--rosso); }
 
-    /* Chips rápidos */
+    /* CHIPS DESLIZANTES */
     .chips-scroll {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 10px;
+      padding-bottom: 3px;
+      margin-bottom: 9px;
       scrollbar-width: none;
     }
 
-    .chips-scroll::-webkit-scrollbar {
-      display: none;
-    }
+    .chips-scroll::-webkit-scrollbar { display: none; }
 
     .chip {
-      background: var(--card-soft);
+      background: var(--surface-2);
       border: 1px solid var(--border);
-      color: #cbd5e1;
+      color: #e2e8f0;
       padding: 6px 11px;
       border-radius: 999px;
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
+      transition: transform 0.1s, background 0.15s;
     }
 
-    .chip:active {
-      background: var(--rosso);
-      color: #fff;
-    }
+    .chip:active { transform: scale(0.94); background: var(--rosso); color: #fff; }
 
-    /* Seletor Segmentado Compacto (1 Linha) */
+    /* SELETOR SEGMENTADO */
     .segmented {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+      gap: 5px;
       background: var(--input);
       padding: 4px;
-      border-radius: 13px;
+      border-radius: 12px;
       border: 1px solid var(--border);
     }
 
@@ -356,104 +344,80 @@
       background: transparent;
       border: none;
       color: var(--muted);
-      padding: 9px 6px;
-      border-radius: 10px;
-      font-size: 0.75rem;
+      padding: 8px 4px;
+      border-radius: 9px;
+      font-size: 0.73rem;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
-      transition: all 0.15s;
+      transition: all 0.14s;
     }
 
-    .seg-btn.active-red {
-      background: var(--rosso);
-      color: #fff;
-    }
+    .seg-btn.active-red { background: var(--rosso); color: #fff; box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35); }
+    .seg-btn.active-blue { background: var(--blue); color: #fff; box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35); }
 
-    .seg-btn.active-blue {
-      background: var(--blue);
-      color: #fff;
-    }
-
-    /* Botão Principal Grande para o Polegar */
+    /* BOTÕES PRINCIPAIS */
     .btn-primary {
       width: 100%;
-      background: linear-gradient(135deg, var(--rosso), var(--rosso-dark));
+      background: linear-gradient(135deg, var(--rosso), var(--rosso-2));
       color: #fff;
       border: none;
-      border-radius: 15px;
-      padding: 14px;
-      font-size: 0.95rem;
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 0.92rem;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.32);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 7px;
+      transition: transform 0.1s;
     }
 
-    .btn-primary.blue {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
-    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary.blue { background: linear-gradient(135deg, var(--blue), #1d4ed8); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+    .btn-primary.green { background: linear-gradient(135deg, var(--green), #047857); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
 
-    .btn-primary.green {
-      background: linear-gradient(135deg, #10b981, #047857);
-      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
-    }
-
-    /* =====================================================================
-       ITENS DE HISTÓRICO E LINHA DO TEMPO (LIMPOS E COMPACTOS)
-       ===================================================================== */
-    .feed-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    /* LISTA DE ITENS COM AÇÕES RÁPIDAS */
+    .feed-list { display: flex; flex-direction: column; gap: 7px; }
 
     .feed-item {
       background: var(--input);
       border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 12px 13px;
+      border-radius: 14px;
+      padding: 11px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s;
     }
 
-    .feed-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
+    .feed-item:active { border-color: var(--border-hi); }
+
+    .feed-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
 
     .feed-ico {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.05rem;
+      font-size: 1rem;
       flex-shrink: 0;
     }
 
-    .feed-ico.fuel {
-      background: rgba(239, 68, 68, 0.15);
-      color: #fca5a5;
-    }
+    .feed-ico.fuel { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .feed-ico.maint { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
+    .feed-ico.odo { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
 
-    .feed-ico.maint {
-      background: rgba(59, 130, 246, 0.15);
-      color: #93c5fd;
-    }
-
+    .feed-info { min-width: 0; }
     .feed-info strong {
       display: block;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: #fff;
       white-space: nowrap;
       overflow: hidden;
@@ -462,7 +426,7 @@
 
     .feed-info span {
       display: block;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--muted);
       margin-top: 2px;
     }
@@ -470,45 +434,55 @@
     .feed-right {
       text-align: right;
       flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
     }
 
-    .feed-right strong {
-      display: block;
-      font-size: 0.9rem;
-      color: #fff;
-    }
+    .feed-right strong { font-size: 0.86rem; color: #fff; }
+
+    .item-actions { display: flex; align-items: center; gap: 4px; }
 
     .pay-tag {
       display: inline-block;
-      font-size: 0.65rem;
+      font-size: 0.63rem;
       font-weight: 700;
-      padding: 2px 7px;
+      padding: 2px 6px;
       border-radius: 99px;
-      margin-top: 3px;
     }
 
     .pay-cred { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
     .pay-deb { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
     .pay-pix { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
 
-    /* =====================================================================
-       BARRA INFERIOR FIXA PARA O POLEGAR (ÚNICA NAVEGAÇÃO)
-       ===================================================================== */
+    .del-pill {
+      background: rgba(239, 68, 68, 0.14);
+      border: none;
+      color: #fca5a5;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* BARRA INFERIOR FIXA */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
       z-index: 1000;
-      background: rgba(14, 18, 28, 0.96);
-      backdrop-filter: blur(18px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(11, 14, 22, 0.94);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       align-items: center;
-      padding: 6px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+      padding: 5px 6px calc(7px + env(safe-area-inset-bottom, 0px));
     }
 
     .b-tab {
@@ -518,34 +492,26 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
-      font-size: 0.66rem;
+      gap: 2px;
+      font-size: 0.65rem;
       font-weight: 700;
-      padding: 6px 0;
+      padding: 5px 0;
       cursor: pointer;
     }
 
-    .b-tab .ico {
-      font-size: 1.2rem;
-    }
-
-    .b-tab.active {
-      color: #fff;
-    }
-
-    .b-tab.active .ico {
-      transform: scale(1.1);
-    }
+    .b-tab .ico { font-size: 1.15rem; transition: transform 0.15s; }
+    .b-tab.active { color: #fff; }
+    .b-tab.active .ico { transform: translateY(-1px) scale(1.1); }
 
     .fab-center {
-      width: 50px;
-      height: 50px;
-      margin: -20px auto 0;
+      width: 48px;
+      height: 48px;
+      margin: -18px auto 0;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--rosso), var(--rosso-dark));
+      background: linear-gradient(135deg, var(--rosso), #991b1b);
       border: 3px solid var(--bg);
       color: #fff;
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -554,13 +520,13 @@
       cursor: pointer;
     }
 
-    /* Gaveta / Modal Mobile (Bottom Sheet) */
+    /* BOTTOM SHEETS */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
       z-index: 1500;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(5px);
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -568,15 +534,15 @@
 
     .bottom-sheet {
       width: 100%;
-      max-width: 480px;
-      background: var(--card);
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 26px 26px 0 0;
-      padding: 20px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+      max-width: 460px;
+      background: #121723;
+      border-top: 1px solid var(--border-hi);
+      border-radius: 24px 24px 0 0;
+      padding: 18px 16px calc(22px + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      animation: slideUp 0.2s ease;
+      gap: 9px;
+      animation: slideUp 0.18s ease-out;
     }
 
     @keyframes slideUp {
@@ -586,17 +552,17 @@
 
     .toast-popup {
       position: fixed;
-      top: 16px;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 3000;
-      background: #10b981;
-      color: #05070e;
+      background: var(--green);
+      color: #04130d;
       font-weight: 800;
-      font-size: 0.82rem;
-      padding: 10px 18px;
+      font-size: 0.8rem;
+      padding: 9px 16px;
       border-radius: 99px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55);
       display: none;
       white-space: nowrap;
     }
@@ -604,21 +570,19 @@
 </head>
 <body>
 
-  <!-- =====================================================================
-       1. TELA DE LOGIN MOBILE (PROTEGIDA PELA PLANILHA)
-       ===================================================================== -->
+  <!-- 1. TELA DE LOGIN -->
   <div id="loginOverlay">
     <div class="login-box">
       <div class="car-avatar">
-        <svg width="38" height="38" viewBox="0 0 64 64" fill="none">
-          <path d="M10 38L16 22C17.5 18.5 20.5 17 24.5 17H39.5C43.5 17 46.5 18.5 48 22L54 38" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
-          <rect x="6" y="34" width="52" height="15" rx="6" fill="#FFFFFF"/>
-          <circle cx="17" cy="49" r="5.5" fill="#090b10" stroke="#FFFFFF" stroke-width="2.5"/>
-          <circle cx="47" cy="49" r="5.5" fill="#090b10" stroke="#FFFFFF" stroke-width="2.5"/>
+        <svg width="36" height="36" viewBox="0 0 64 64" fill="none">
+          <path d="M10 38L16 22C17.5 18.5 20.5 17 24.5 17H39.5C43.5 17 46.5 18.5 48 22L54 38" stroke="#FFF" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="6" y="34" width="52" height="15" rx="6" fill="#FFF"/>
+          <circle cx="17" cy="49" r="5.5" fill="#07090e" stroke="#FFF" stroke-width="2.5"/>
+          <circle cx="47" cy="49" r="5.5" fill="#07090e" stroke="#FFF" stroke-width="2.5"/>
         </svg>
       </div>
       <h1>Fiat Argo 24/25</h1>
-      <p>Digite seu login autorizado na sua Planilha Google</p>
+      <p>Acesso seguro sincronizado com sua Planilha Google</p>
 
       <div id="loginErrorBox" class="login-error-box"></div>
 
@@ -627,72 +591,55 @@
           <label>👤 Usuário ou E-mail</label>
           <input type="text" id="loginUser" placeholder="Seu usuário" required autocomplete="username" />
         </div>
-
         <div class="field" style="text-align:left;">
           <label>🔑 Senha</label>
           <input type="password" id="loginPass" placeholder="Sua senha" required autocomplete="current-password" />
         </div>
-
-        <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; color:var(--muted); margin:10px 0 16px; cursor:pointer;">
-          <input type="checkbox" id="loginRemember" checked style="width:17px; height:17px; accent-color:var(--rosso);" />
-          Manter conectado no meu celular
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.76rem; color:var(--muted); margin:8px 0 14px; cursor:pointer;">
+          <input type="checkbox" id="loginRemember" checked style="width:16px; height:16px; accent-color:var(--rosso);" />
+          Manter conectado neste celular
         </label>
-
-        <button type="submit" class="btn-primary" id="btnLoginSubmit">
-          Entrar no App
-        </button>
+        <button type="submit" class="btn-primary" id="btnLoginSubmit">Entrar no Cockpit</button>
       </form>
     </div>
   </div>
 
-  <!-- =====================================================================
-       2. APP MOBILE PRINCIPAL (LIMPO, DIRETO E PENSADO PARA O CELULAR)
-       ===================================================================== -->
+  <!-- 2. COCKPIT MOBILE ULTRA-LEVE -->
   <div class="phone-shell">
 
-    <!-- Topo super limpo (Toque no KM para abrir o Marcador de Quilometragem) -->
     <header class="app-topbar">
-      <div class="topbar-car" style="cursor:pointer;" onclick="quickJump('pane-timeline','inOdoMarkerKm')" title="Toque para registrar quilometragem">
+      <div class="topbar-car" onclick="quickJump('pane-timeline','inOdoMarkerKm')">
         <div class="topbar-badge">🚗</div>
         <div class="topbar-title">
           <strong>Argo 24/25 Vermelho</strong>
-          <span class="mono" id="topOdoText" style="color:#38bdf8; font-weight:700;">📍 0 km ✏️</span>
+          <span class="mono" id="topOdoText">📍 0 km ✏️</span>
         </div>
       </div>
 
       <div class="topbar-actions">
-        <button type="button" class="icon-btn" onclick="quickJump('pane-timeline','inOdoMarkerKm')" style="border-color:rgba(56,189,248,0.4); color:#38bdf8;">
+        <button type="button" class="icon-btn" onclick="quickJump('pane-timeline','inOdoMarkerKm')" style="border-color:rgba(56,189,248,0.35); color:var(--sky);">
           📍 +KM
         </button>
-        <button type="button" class="icon-btn" onclick="pullFromCloudNow(false)" title="Sincronizar com Google Planilhas">
+        <button type="button" class="icon-btn" onclick="pullFromCloudNow(false)">
           <span id="syncDot" class="sync-dot"></span>
-          <span id="syncLabel">Nuvem</span>
+          <span id="syncLabel">Salvo</span>
         </button>
-        <button type="button" class="icon-btn" onclick="openMenuSheet()">⚙️</button>
+        <button type="button" class="icon-btn" onclick="openSheet('menuSheet')">⚙️</button>
       </div>
     </header>
 
-    <!-- 3 Indicadores Essenciais em 1 Linha Compacta (Média Argo Editável com 1 Toque) -->
+    <!-- 3 Pílulas Superiores -->
     <div class="summary-strip">
-      <div class="stat-pill" style="border-color:rgba(56,189,248,0.45); cursor:pointer;" onclick="document.getElementById('inCustomKmL').focus()">
+      <div class="stat-pill" style="border-color:rgba(56,189,248,0.4); cursor:pointer;" onclick="$('inCustomKmL').focus()">
         <small>Média Argo ✏️</small>
         <div style="display:flex; align-items:center; justify-content:center; gap:3px;">
-          <input
-            type="number"
-            id="inCustomKmL"
-            class="mono"
-            inputmode="decimal"
-            step="0.1"
-            value="12.8"
-            oninput="onCustomKmLChange(this.value)"
-            style="width:54px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.4); border-radius:7px; color:#38bdf8; font-size:0.95rem; font-weight:800; text-align:center; padding:2px 4px; outline:none;"
-          />
-          <span class="mono" style="font-size:0.75rem; font-weight:800; color:#38bdf8;">km/L</span>
+          <input type="number" id="inCustomKmL" class="mono kml-inline-input" inputmode="decimal" step="0.1" value="12.8" oninput="onCustomKmLChange(this.value)" />
+          <span class="mono" style="font-size:0.72rem; font-weight:800; color:var(--sky);">km/L</span>
         </div>
       </div>
       <div class="stat-pill">
         <small>Custo / KM</small>
-        <strong class="mono" id="heroCostKm" style="color:#10b981;">R$ 0,75</strong>
+        <strong class="mono" id="heroCostKm" style="color:var(--green);">R$ 0,75</strong>
       </div>
       <div class="stat-pill">
         <small>Gasto Total</small>
@@ -700,19 +647,16 @@
       </div>
     </div>
 
-    <!-- ===================================================================
-         ABA 1: ABASTECER (DIRETO AO PONTO NO CELULAR)
-         =================================================================== -->
+    <!-- ABA 1: ABASTECER -->
     <section id="pane-fuel" class="tab-pane active">
       <div class="mobile-card">
         <div class="card-title">
           <span id="fuelFormTitle">⛽ Novo Abastecimento</span>
-          <span class="mono" id="fuelCalcLiters" style="font-size:0.8rem; color:#38bdf8;">0,00 L</span>
+          <span class="mono" id="fuelCalcLiters" style="font-size:0.78rem; color:var(--sky);">0,00 L</span>
         </div>
 
         <input type="hidden" id="fuelEditId" value="" />
 
-        <!-- Atalhos de Valor com 1 Toque -->
         <div class="chips-scroll">
           <button type="button" class="chip" onclick="setQuickFuelAmount(50)">R$ 50</button>
           <button type="button" class="chip" onclick="setQuickFuelAmount(100)">R$ 100</button>
@@ -727,12 +671,11 @@
             <input type="number" id="inFuelOdo" inputmode="numeric" placeholder="Ex: 28500" oninput="updateFuelPreview()" />
           </div>
           <div class="field">
-            <label>💵 Valor Abastecido (R$)</label>
+            <label>💵 Valor Total (R$)</label>
             <input type="number" id="inFuelAmount" inputmode="decimal" step="0.01" placeholder="Ex: 150,00" oninput="onDrivvoTriadInput('amount')" />
           </div>
         </div>
 
-        <!-- Atalho +KM estilo Drivvo -->
         <div class="chips-scroll" style="margin-top:-2px;">
           <button type="button" class="chip" onclick="addQuickOdo(50)">+50 km</button>
           <button type="button" class="chip" onclick="addQuickOdo(100)">+100 km</button>
@@ -742,11 +685,11 @@
 
         <div class="row-2">
           <div class="field">
-            <label>🏷️ Preço por Litro (R$/L)</label>
+            <label>🏷️ Preço/Litro (R$/L)</label>
             <input type="number" id="inFuelPriceL" inputmode="decimal" step="0.01" placeholder="Ex: 5,89" oninput="onDrivvoTriadInput('price')" />
           </div>
           <div class="field">
-            <label>💧 Litros (Automático)</label>
+            <label>💧 Litros (Auto)</label>
             <input type="number" id="inFuelLiters" inputmode="decimal" step="0.01" placeholder="0,00" oninput="onDrivvoTriadInput('liters')" />
           </div>
         </div>
@@ -762,7 +705,7 @@
         </div>
 
         <div class="field">
-          <label>💳 Pagou no Crédito ou Débito?</label>
+          <label>💳 Pagamento (Crédito ou Débito)</label>
           <div class="segmented" id="fuelPayGrid">
             <button type="button" class="seg-btn active-blue" onclick="selectFuelPay('Crédito', this)">💳 Crédito</button>
             <button type="button" class="seg-btn" onclick="selectFuelPay('Débito', this)">🏦 Débito</button>
@@ -770,7 +713,7 @@
           </div>
         </div>
 
-        <div class="row-2" style="margin-top:4px;">
+        <div class="row-2">
           <div class="field">
             <label>📅 Data</label>
             <input type="date" id="inFuelDate" />
@@ -781,17 +724,12 @@
           </div>
         </div>
 
-        <div style="display:flex; gap:8px; margin-top:6px;">
-          <button type="button" class="btn-primary" id="btnSaveFuel" onclick="saveFuel()">
-            ✅ Salvar Abastecimento
-          </button>
-          <button type="button" class="icon-btn" id="btnCancelFuel" style="display:none; height:auto;" onclick="resetFuelForm()">
-            Cancelar
-          </button>
+        <div style="display:flex; gap:7px; margin-top:4px;">
+          <button type="button" class="btn-primary" id="btnSaveFuel" onclick="saveFuel()">✅ Salvar Abastecimento</button>
+          <button type="button" class="icon-btn" id="btnCancelFuel" style="display:none; height:auto;" onclick="resetFuelForm()">Cancelar</button>
         </div>
       </div>
 
-      <!-- Últimos Abastecimentos Compactos -->
       <div class="mobile-card">
         <div class="card-title">
           <span>📋 Últimos Abastecimentos</span>
@@ -801,19 +739,16 @@
       </div>
     </section>
 
-    <!-- ===================================================================
-         ABA 2: PEÇAS TROCADAS / MANUTENÇÃO (LIMPO NO CELULAR)
-         =================================================================== -->
+    <!-- ABA 2: PEÇAS TROCADAS -->
     <section id="pane-maint" class="tab-pane">
       <div class="mobile-card">
         <div class="card-title">
           <span id="maintFormTitle">🔧 Registrar Peça Trocada</span>
-          <span class="mono" id="maintCalcTotal" style="font-size:0.85rem; color:#10b981;">R$ 0,00</span>
+          <span class="mono" id="maintCalcTotal" style="font-size:0.82rem; color:var(--green);">R$ 0,00</span>
         </div>
 
         <input type="hidden" id="maintEditId" value="" />
 
-        <!-- Peças Rápidas do Argo em 1 Linha Deslizante -->
         <div class="chips-scroll">
           <button type="button" class="chip" onclick="fillQuickPart('Óleo 0W20 + Filtro')">🛢️ Óleo + Filtro</button>
           <button type="button" class="chip" onclick="fillQuickPart('Pastilha de Freio')">🛑 Pastilha Freio</button>
@@ -864,7 +799,7 @@
         </div>
 
         <div class="field">
-          <label>💳 Pagou no Crédito ou Débito?</label>
+          <label>💳 Pagamento (Crédito ou Débito)</label>
           <div class="segmented" id="maintPayGrid">
             <button type="button" class="seg-btn active-blue" onclick="selectMaintPay('Crédito', this)">💳 Crédito</button>
             <button type="button" class="seg-btn" onclick="selectMaintPay('Débito', this)">🏦 Débito</button>
@@ -877,13 +812,9 @@
           <input type="text" id="inMaintNotes" placeholder="Ex: Original Mopar - 6 meses garantia" />
         </div>
 
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="btn-primary blue" id="btnSaveMaint" onclick="saveMaint()">
-            ✅ Salvar Peça Trocada
-          </button>
-          <button type="button" class="icon-btn" id="btnCancelMaint" style="display:none; height:auto;" onclick="resetMaintForm()">
-            Cancelar
-          </button>
+        <div style="display:flex; gap:7px;">
+          <button type="button" class="btn-primary blue" id="btnSaveMaint" onclick="saveMaint()">✅ Salvar Peça Trocada</button>
+          <button type="button" class="icon-btn" id="btnCancelMaint" style="display:none; height:auto;" onclick="resetMaintForm()">Cancelar</button>
         </div>
       </div>
 
@@ -896,20 +827,16 @@
       </div>
     </section>
 
-    <!-- ===================================================================
-         ABA 3: MARCADOR DE QUILOMETRAGEM INDEPENDENTE + LINHA DO TEMPO
-         =================================================================== -->
+    <!-- ABA 3: MARCADOR DE KM INDEPENDENTE + HISTÓRICO -->
     <section id="pane-timeline" class="tab-pane">
-      <!-- Marcador de Quilometragem do Veículo (Independente de Abastecimento) -->
       <div class="mobile-card" style="border-color:rgba(56,189,248,0.35);">
         <div class="card-title">
           <span id="odoFormTitle">📍 Marcador de Quilometragem</span>
-          <small class="mono" id="odoTotalSpanLabel" style="color:#38bdf8;">Rodado: 0 km</small>
+          <small class="mono" id="odoTotalSpanLabel" style="color:var(--sky);">Trecho: +0 km</small>
         </div>
 
         <input type="hidden" id="odoEditId" value="" />
 
-        <!-- Atalhos rápidos +KM sobre o último odômetro -->
         <div class="chips-scroll">
           <button type="button" class="chip" onclick="addQuickMarkerOdo(10)">+10 km</button>
           <button type="button" class="chip" onclick="addQuickMarkerOdo(25)">+25 km</button>
@@ -924,17 +851,17 @@
             <input type="number" id="inOdoMarkerKm" inputmode="numeric" placeholder="Ex: 28650" oninput="updateOdoDeltaPreview()" />
           </div>
           <div class="field">
-            <label>📅 Data da Marcação</label>
+            <label>📅 Data</label>
             <input type="date" id="inOdoMarkerDate" />
           </div>
         </div>
 
-        <div id="odoDeltaHint" style="font-size:0.75rem; color:#38bdf8; margin: -2px 0 10px; font-weight:700;">
-          Digite o KM do painel para registrar no histórico sem precisar abastecer.
+        <div id="odoDeltaHint" style="font-size:0.74rem; color:var(--sky); margin:-2px 0 9px; font-weight:700;">
+          Registre a quilometragem do painel mesmo sem abastecer.
         </div>
 
         <div class="field">
-          <label>🏷️ Momento / Tipo de Registro</label>
+          <label>🏷️ Momento</label>
           <div class="segmented" id="odoTypeGrid">
             <button type="button" class="seg-btn active-blue" onclick="selectOdoType('Início do Dia', this)">🌅 Início Dia</button>
             <button type="button" class="seg-btn" onclick="selectOdoType('Fim do Dia', this)">🌙 Fim Dia</button>
@@ -945,24 +872,19 @@
 
         <div class="field">
           <label>📝 Observação (Opcional)</label>
-          <input type="text" id="inOdoMarkerNotes" placeholder="Ex: Saída para rodar / Chegada em casa" />
+          <input type="text" id="inOdoMarkerNotes" placeholder="Ex: Saída para rodar / Chegada" />
         </div>
 
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="btn-primary blue" id="btnSaveOdo" onclick="saveOdoMarker()">
-            📍 Salvar Quilometragem no Histórico
-          </button>
-          <button type="button" class="icon-btn" id="btnCancelOdo" style="display:none; height:auto;" onclick="resetOdoForm()">
-            Cancelar
-          </button>
+        <div style="display:flex; gap:7px;">
+          <button type="button" class="btn-primary blue" id="btnSaveOdo" onclick="saveOdoMarker()">📍 Salvar Quilometragem</button>
+          <button type="button" class="icon-btn" id="btnCancelOdo" style="display:none; height:auto;" onclick="resetOdoForm()">Cancelar</button>
         </div>
       </div>
 
-      <!-- Histórico Unificado de KM, Abastecimentos e Peças -->
       <div class="mobile-card">
         <div class="card-title">
           <span>🕒 Histórico de KM & Gastos</span>
-          <select id="filterTimelineType" onchange="renderEverything()" style="background:var(--input); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:8px; font-size:0.75rem;">
+          <select id="filterTimelineType" onchange="scheduleRender()" style="background:var(--input); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:8px; font-size:0.74rem;">
             <option value="ALL">🌟 Tudo</option>
             <option value="ODO">📍 Só Quilometragem</option>
             <option value="FUEL">⛽ Só Combustível</option>
@@ -972,51 +894,25 @@
         <div id="timelineContainer" class="feed-list"></div>
       </div>
 
-      <!-- Resumo Financeiro Compacto -->
       <div class="mobile-card">
-        <div class="card-title">
-          <span>💳 Resumo Crédito vs. Débito</span>
-        </div>
-        <div class="summary-strip" style="margin-bottom:10px;">
-          <div class="stat-pill">
-            <small>💳 Crédito</small>
-            <strong class="mono" id="legCred" style="color:#93c5fd; font-size:0.84rem;">R$ 0,00</strong>
-          </div>
-          <div class="stat-pill">
-            <small>🏦 Débito</small>
-            <strong class="mono" id="legDeb" style="color:#6ee7b7; font-size:0.84rem;">R$ 0,00</strong>
-          </div>
-          <div class="stat-pill">
-            <small>💠 PIX</small>
-            <strong class="mono" id="legPix" style="color:#d8b4fe; font-size:0.84rem;">R$ 0,00</strong>
-          </div>
+        <div class="card-title"><span>💳 Divisão Financeira</span></div>
+        <div class="summary-strip" style="margin-bottom:8px;">
+          <div class="stat-pill"><small>💳 Crédito</small><strong class="mono" id="legCred" style="color:#93c5fd; font-size:0.82rem;">R$ 0,00</strong></div>
+          <div class="stat-pill"><small>🏦 Débito</small><strong class="mono" id="legDeb" style="color:#6ee7b7; font-size:0.82rem;">R$ 0,00</strong></div>
+          <div class="stat-pill"><small>💠 PIX</small><strong class="mono" id="legPix" style="color:#d8b4fe; font-size:0.82rem;">R$ 0,00</strong></div>
         </div>
         <div class="summary-strip">
-          <div class="stat-pill">
-            <small>⛽ Combustível</small>
-            <strong class="mono" id="legFuel" style="color:#fda4af; font-size:0.84rem;">R$ 0,00</strong>
-          </div>
-          <div class="stat-pill">
-            <small>🔩 Só Peças</small>
-            <strong class="mono" id="legParts" style="color:#38bdf8; font-size:0.84rem;">R$ 0,00</strong>
-          </div>
-          <div class="stat-pill">
-            <small>🛠️ Mão Obra</small>
-            <strong class="mono" id="legLabor" style="color:#fcd34d; font-size:0.84rem;">R$ 0,00</strong>
-          </div>
+          <div class="stat-pill"><small>⛽ Combustível</small><strong class="mono" id="legFuel" style="color:#fda4af; font-size:0.82rem;">R$ 0,00</strong></div>
+          <div class="stat-pill"><small>🔩 Só Peças</small><strong class="mono" id="legParts" style="color:var(--sky); font-size:0.82rem;">R$ 0,00</strong></div>
+          <div class="stat-pill"><small>🛠️ Mão Obra</small><strong class="mono" id="legLabor" style="color:#fcd34d; font-size:0.82rem;">R$ 0,00</strong></div>
         </div>
       </div>
     </section>
 
-    <!-- ===================================================================
-         ABA 4: CALCULADORA FLEX + SEMÁFORO REA
-         =================================================================== -->
+    <!-- ABA 4: CALCULADORA FLEX + SEMÁFORO REA -->
     <section id="pane-tools" class="tab-pane">
-      <!-- Calculadora Flex Drivvo -->
       <div class="mobile-card">
-        <div class="card-title">
-          <span>⚖️ Etanol ou Gasolina no Argo?</span>
-        </div>
+        <div class="card-title"><span>⚖️ Etanol ou Gasolina no Argo?</span></div>
         <div class="row-2">
           <div class="field">
             <label>🌱 Preço Etanol (R$/L)</label>
@@ -1029,24 +925,21 @@
         </div>
         <div class="row-2">
           <div class="field">
-            <label>🌱 Média no Etanol (km/L)</label>
+            <label>🌱 Média Etanol (km/L)</label>
             <input type="number" id="flexEthKmL" inputmode="decimal" step="0.1" value="9.0" oninput="calcDrivvoFlex()" />
           </div>
           <div class="field">
-            <label>⛽ Média na Gasolina (km/L)</label>
+            <label>⛽ Média Gasolina (km/L)</label>
             <input type="number" id="flexGasKmL" inputmode="decimal" step="0.1" value="12.8" oninput="onCustomKmLChange(this.value)" />
           </div>
         </div>
-        <div style="background:var(--input); border:1px solid var(--border); border-radius:14px; padding:12px; margin-bottom:10px;">
-          <strong id="flexWinnerTitle" style="display:block; font-size:0.9rem; color:#10b981;">✅ COMPENSA GASOLINA</strong>
-          <span id="flexWinnerSub" style="font-size:0.76rem; color:var(--muted);">Calculado para o consumo do Argo (9,0 vs 12,8 km/L)</span>
+        <div style="background:var(--input); border:1px solid var(--border); border-radius:13px; padding:11px; margin-bottom:9px;">
+          <strong id="flexWinnerTitle" style="display:block; font-size:0.88rem; color:var(--green);">✅ COMPENSA GASOLINA</strong>
+          <span id="flexWinnerSub" style="font-size:0.74rem; color:var(--muted);">Cálculo real pelo consumo do Argo</span>
         </div>
-        <button type="button" class="btn-primary green" onclick="applyFlexWinnerToFuel()">
-          ⛽ Usar este combustível agora
-        </button>
+        <button type="button" class="btn-primary green" onclick="applyFlexWinnerToFuel()">⛽ Usar este combustível agora</button>
       </div>
 
-      <!-- Semáforo de Corridas REA -->
       <div class="mobile-card">
         <div class="card-title">
           <span>🚦 Semáforo de Corrida</span>
@@ -1068,12 +961,12 @@
           <input type="number" id="simTotalMin" inputmode="numeric" step="1" value="18" oninput="evaluateRide()" />
         </div>
 
-        <div id="semResultCard" style="background:var(--input); border:2px solid #10b981; border-radius:16px; padding:14px; display:flex; align-items:center; gap:12px;">
-          <div id="semOrb" style="width:38px; height:38px; border-radius:50%; background:#10b981; flex-shrink:0;"></div>
+        <div id="semResultCard" style="background:var(--input); border:2px solid var(--green); border-radius:15px; padding:13px; display:flex; align-items:center; gap:11px;">
+          <div id="semOrb" style="width:36px; height:36px; border-radius:50%; background:var(--green); flex-shrink:0;"></div>
           <div>
-            <strong id="semVerdict" style="font-size:0.95rem; color:#10b981; display:block;">VALE A PENA ACEITAR</strong>
-            <span id="semNumbers" class="mono" style="font-size:0.8rem; color:#fff; display:block;">R$ 2,94/km • R$ 83/h</span>
-            <span id="semProfit" style="font-size:0.74rem; color:var(--muted);">Lucro livre: R$ 18,62</span>
+            <strong id="semVerdict" style="font-size:0.92rem; color:var(--green); display:block;">VALE A PENA ACEITAR</strong>
+            <span id="semNumbers" class="mono" style="font-size:0.78rem; color:#fff; display:block;">R$ 2,94/km • R$ 83/h</span>
+            <span id="semProfit" style="font-size:0.73rem; color:var(--muted);">Lucro livre: R$ 18,62</span>
           </div>
         </div>
       </div>
@@ -1081,9 +974,7 @@
 
   </div>
 
-  <!-- =====================================================================
-       BARRA INFERIOR FIXA PARA O POLEGAR (PADRÃO DRIVVO MOBILE)
-       ===================================================================== -->
+  <!-- BARRA INFERIOR FIXA -->
   <nav class="bottom-nav">
     <button type="button" class="b-tab active" data-pane="pane-fuel" onclick="switchPaneById('pane-fuel')">
       <span class="ico">⛽</span><span>Abastecer</span>
@@ -1091,7 +982,7 @@
     <button type="button" class="b-tab" data-pane="pane-maint" onclick="switchPaneById('pane-maint')">
       <span class="ico">🔧</span><span>Peças</span>
     </button>
-    <button type="button" class="fab-center" onclick="openQuickSheet()">+</button>
+    <button type="button" class="fab-center" onclick="openSheet('quickSheet')">+</button>
     <button type="button" class="b-tab" data-pane="pane-timeline" onclick="switchPaneById('pane-timeline')">
       <span class="ico">📍</span><span>KM/Hist.</span>
     </button>
@@ -1100,115 +991,95 @@
     </button>
   </nav>
 
-  <!-- =====================================================================
-       GAVETA DO BOTÃO (+) CENTRAL
-       ===================================================================== -->
-  <div id="quickSheet" class="sheet-backdrop" onclick="if(event.target===this)this.style.display='none'">
+  <!-- GAVETA RÁPIDA (+) -->
+  <div id="quickSheet" class="sheet-backdrop" onclick="if(event.target===this)closeSheet('quickSheet')">
     <div class="bottom-sheet">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <strong style="font-size:0.95rem;">⚡ O que deseja lançar no Argo?</strong>
-        <button type="button" class="icon-btn" onclick="document.getElementById('quickSheet').style.display='none'">✕</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+        <strong style="font-size:0.92rem;">⚡ Lançamento Rápido — Argo 24/25</strong>
+        <button type="button" class="icon-btn" onclick="closeSheet('quickSheet')">✕</button>
       </div>
-      <button type="button" class="btn-primary" onclick="quickJump('pane-fuel','inFuelOdo')">
-        ⛽ Novo Abastecimento
-      </button>
-      <button type="button" class="btn-primary blue" onclick="quickJump('pane-timeline','inOdoMarkerKm')">
-        📍 Marcar Quilometragem (Sem Abastecer)
-      </button>
-      <button type="button" class="btn-primary blue" style="background:#1e293b; box-shadow:none;" onclick="quickJump('pane-maint','inMaintPart')">
-        🔧 Nova Peça Trocada / Manutenção
-      </button>
-      <button type="button" class="btn-primary green" onclick="quickJump('pane-tools','flexEthPrice')">
-        ⚖️ Calculadora Flex (Etanol vs Gasolina)
-      </button>
+      <button type="button" class="btn-primary" onclick="quickJump('pane-fuel','inFuelOdo')">⛽ Novo Abastecimento</button>
+      <button type="button" class="btn-primary blue" onclick="quickJump('pane-timeline','inOdoMarkerKm')">📍 Marcar Quilometragem (Sem Abastecer)</button>
+      <button type="button" class="btn-primary blue" style="background:var(--surface-2); box-shadow:none;" onclick="quickJump('pane-maint','inMaintPart')">🔧 Nova Peça Trocada / Manutenção</button>
+      <button type="button" class="btn-primary green" onclick="quickJump('pane-tools','flexEthPrice')">⚖️ Calculadora Flex (Etanol vs Gasolina)</button>
     </div>
   </div>
 
-  <!-- =====================================================================
-       GAVETA DE CONFIGURAÇÕES / PLANILHA / SENHA (OCULTA ATÉ TOCAR EM ⚙️)
-       ===================================================================== -->
-  <div id="menuSheet" class="sheet-backdrop" onclick="if(event.target===this)this.style.display='none'">
+  <!-- GAVETA CONFIGURAÇÕES (⚙️) -->
+  <div id="menuSheet" class="sheet-backdrop" onclick="if(event.target===this)closeSheet('menuSheet')">
     <div class="bottom-sheet">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <strong style="font-size:0.95rem;">⚙️ Conta & Planilha Google</strong>
-        <button type="button" class="icon-btn" onclick="document.getElementById('menuSheet').style.display='none'">✕</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+        <strong style="font-size:0.92rem;">⚙️ Conta & Planilha Google</strong>
+        <button type="button" class="icon-btn" onclick="closeSheet('menuSheet')">✕</button>
       </div>
-      <div style="font-size:0.78rem; color:var(--muted); margin-bottom:6px;">
+      <div style="font-size:0.76rem; color:var(--muted); margin-bottom:4px;">
         Conectado como: <strong id="loggedUserDisplay" style="color:#fff;">Proprietário</strong>
       </div>
-
-      <a href="https://docs.google.com/spreadsheets/d/1Kcr9P4MVfkSew6Ol66Jd-yzMuyUcyCI3tqW4kXYXimw/edit" target="_blank" class="btn-primary green" style="text-decoration:none;">
-        📗 Abrir Minha Planilha no Google
-      </a>
-      <button type="button" class="btn-primary blue" onclick="pushToCloudNow(false); document.getElementById('menuSheet').style.display='none';">
-        ☁️ Salvar Tudo na Planilha Agora
-      </button>
-      <button type="button" class="icon-btn" style="justify-content:center; height:44px;" onclick="exportToExcelCsv()">
-        📊 Baixar Planilha em Excel (.CSV)
-      </button>
-      <button type="button" class="icon-btn" style="justify-content:center; height:44px;" onclick="document.getElementById('menuSheet').style.display='none'; document.getElementById('accountModal').style.display='flex';">
-        🔑 Alterar Minha Senha
-      </button>
-      <button type="button" class="icon-btn" style="justify-content:center; height:44px; color:#fda4af;" onclick="logoutUser()">
-        🚪 Sair da Conta
-      </button>
+      <a href="https://docs.google.com/spreadsheets/d/1Kcr9P4MVfkSew6Ol66Jd-yzMuyUcyCI3tqW4kXYXimw/edit" target="_blank" class="btn-primary green" style="text-decoration:none;">📗 Abrir Minha Planilha no Google</a>
+      <button type="button" class="btn-primary blue" onclick="pushToCloudNow(false); closeSheet('menuSheet');">☁️ Forçar Sincronização Agora</button>
+      <button type="button" class="icon-btn" style="justify-content:center; height:42px;" onclick="exportToExcelCsv()">📊 Baixar Cópia em Excel (.CSV)</button>
+      <button type="button" class="icon-btn" style="justify-content:center; height:42px;" onclick="closeSheet('menuSheet'); openSheet('accountModal');">🔑 Alterar Minha Senha</button>
+      <button type="button" class="icon-btn" style="justify-content:center; height:42px; color:#fda4af;" onclick="logoutUser()">🚪 Sair da Conta</button>
     </div>
   </div>
 
-  <!-- Modal Trocar Senha -->
-  <div id="accountModal" class="sheet-backdrop" onclick="if(event.target===this)this.style.display='none'">
+  <!-- MODAL ALTERAR SENHA -->
+  <div id="accountModal" class="sheet-backdrop" onclick="if(event.target===this)closeSheet('accountModal')">
     <div class="bottom-sheet">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <strong style="font-size:0.95rem;">🔑 Alterar Minha Senha</strong>
-        <button type="button" class="icon-btn" onclick="document.getElementById('accountModal').style.display='none'">✕</button>
+        <strong style="font-size:0.92rem;">🔑 Alterar Minha Senha</strong>
+        <button type="button" class="icon-btn" onclick="closeSheet('accountModal')">✕</button>
       </div>
-      <div class="field">
-        <label>Senha Atual</label>
-        <input type="password" id="cfgOldPass" placeholder="Digite sua senha atual" />
-      </div>
-      <div class="field">
-        <label>Nova Senha</label>
-        <input type="password" id="cfgNewPass" placeholder="Mínimo 4 caracteres" />
-      </div>
-      <button type="button" class="btn-primary" onclick="changeUserPassword()">
-        💾 Salvar Nova Senha
-      </button>
+      <div class="field"><label>Senha Atual</label><input type="password" id="cfgOldPass" placeholder="Senha atual" /></div>
+      <div class="field"><label>Nova Senha</label><input type="password" id="cfgNewPass" placeholder="Mínimo 4 caracteres" /></div>
+      <button type="button" class="btn-primary" onclick="changeUserPassword()">💾 Salvar Nova Senha</button>
     </div>
   </div>
 
   <div id="toastPopup" class="toast-popup">✔ Salvo!</div>
 
   <script>
-    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyUplbaDirv6nUDZg1THBmFGxVZNXrH7tLx0hm9F2a_TSYmbxyo-HOXPYvnFC4jG4o6/exec";
+    // O(1) DOM Cache & Haptic Micro-Engine
+    const domCache = Object.create(null);
+    const $ = id => domCache[id] || (domCache[id] = document.getElementById(id));
+    const haptic = () => { try { if (navigator.vibrate) navigator.vibrate(10); } catch (_) {} };
 
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyUplbaDirv6nUDZg1THBmFGxVZNXrH7tLx0hm9F2a_TSYmbxyo-HOXPYvnFC4jG4o6/exec";
     const KEY_FUEL = "argo_2024_25_web_fuels_v1";
     const KEY_MAINT = "argo_2024_25_web_maints_v1";
     const KEY_ODO = "argo_2024_25_web_odos_v1";
     const KEY_SESSION = "argo_2024_25_session_token_v1";
     const KEY_SHEETS = "argo_2024_25_sheets_cfg_v2";
+    const KEY_CUSTOM_KML = "argo_2024_25_custom_kml_v1";
 
     let selectedFuelType = "Gasolina Comum";
     let selectedFuelPay = "Crédito";
     let selectedMaintPay = "Crédito";
     let selectedOdoType = "Início do Dia";
     let lastFlexWinner = { fuelType: "Gasolina Comum", priceL: 5.89 };
+    let customKmL = parseFloat(localStorage.getItem(KEY_CUSTOM_KML) || "12.8") || 12.8;
+    let renderPending = false;
+    let syncTimer = null;
 
-    let fuelRecords = JSON.parse(localStorage.getItem(KEY_FUEL) || "[]");
-    let maintRecords = JSON.parse(localStorage.getItem(KEY_MAINT) || "[]");
-    let odoRecords = JSON.parse(localStorage.getItem(KEY_ODO) || "[]");
-    let sheetsConfig = JSON.parse(localStorage.getItem(KEY_SHEETS) || '{"webhookUrl":"","lastSync":""}');
-    if (!sheetsConfig.webhookUrl) {
-      sheetsConfig.webhookUrl = DEFAULT_WEBHOOK_URL;
-      localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
-    }
-    let activeSession = JSON.parse(localStorage.getItem(KEY_SESSION) || sessionStorage.getItem(KEY_SESSION) || "null");
+    const readStore = (k, fallback) => {
+      try { return JSON.parse(localStorage.getItem(k)) || fallback; } catch (_) { return fallback; }
+    };
 
-    // Separa os registros de Peças dos registros de Quilometragem Independente ([KM]) vindos da nuvem
+    let fuelRecords = readStore(KEY_FUEL, []);
+    let maintRecords = readStore(KEY_MAINT, []);
+    let odoRecords = readStore(KEY_ODO, []);
+    let sheetsConfig = readStore(KEY_SHEETS, { webhookUrl: DEFAULT_WEBHOOK_URL, lastSync: "" });
+    if (!sheetsConfig.webhookUrl) sheetsConfig.webhookUrl = DEFAULT_WEBHOOK_URL;
+    let activeSession = readStore(KEY_SESSION, null) || (() => {
+      try { return JSON.parse(sessionStorage.getItem(KEY_SESSION)); } catch (_) { return null; }
+    })();
+
     function unpackCloudMaintAndOdo(cloudMaints) {
       if (!Array.isArray(cloudMaints)) return;
       const pureMaints = [];
       const cloudOdos = [];
-      cloudMaints.forEach(m => {
+      for (let i = 0; i < cloudMaints.length; i++) {
+        const m = cloudMaints[i];
         const pName = String(m.partName || "");
         if (pName.indexOf("[KM]") === 0) {
           cloudOdos.push({
@@ -1222,7 +1093,7 @@
         } else {
           pureMaints.push(m);
         }
-      });
+      }
       maintRecords = pureMaints;
       localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
       if (cloudOdos.length > 0 || odoRecords.length === 0) {
@@ -1250,6 +1121,10 @@
     }
 
     async function initAuth() {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+      window.addEventListener("online", () => pushToCloudNow(true));
       if (activeSession && activeSession.user && activeSession.token && activeSession.token !== "LOCAL_MODE") {
         unlockCockpit(activeSession.user);
         await pullFromCloudNow(true);
@@ -1261,7 +1136,7 @@
     }
 
     function showLoginError(msg) {
-      const box = document.getElementById("loginErrorBox");
+      const box = $("loginErrorBox");
       box.textContent = msg || "";
       box.style.display = msg ? "block" : "none";
     }
@@ -1269,16 +1144,15 @@
     async function handleLoginSubmit(e) {
       e.preventDefault();
       showLoginError("");
-      const user = document.getElementById("loginUser").value.trim().toLowerCase();
-      const pass = document.getElementById("loginPass").value.trim();
-      const remember = document.getElementById("loginRemember").checked;
-      const btn = document.getElementById("btnLoginSubmit");
-
+      const user = $("loginUser").value.trim().toLowerCase();
+      const pass = $("loginPass").value.trim();
+      const remember = $("loginRemember").checked;
+      const btn = $("btnLoginSubmit");
       if (!user || !pass) return;
 
       const endpointUrl = sheetsConfig.webhookUrl || DEFAULT_WEBHOOK_URL;
       btn.disabled = true;
-      btn.textContent = "Verificando...";
+      btn.textContent = "Autenticando...";
       try {
         const res = await fetch(endpointUrl, {
           method: "POST",
@@ -1288,19 +1162,16 @@
         });
         const data = await res.json();
         btn.disabled = false;
-        btn.textContent = "Entrar no App";
+        btn.textContent = "Entrar no Cockpit";
 
         if (!data || !data.ok) {
-          showLoginError((data && data.error) || "Usuário ou senha incorretos.");
+          showLoginError((data && data.error) || "Credenciais inválidas.");
           return;
         }
 
         activeSession = { user: data.user, token: data.token, role: data.role || "DONO" };
-        if (remember) {
-          localStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
-        } else {
-          sessionStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
-        }
+        if (remember) localStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
+        else sessionStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
 
         if (Array.isArray(data.fuelRecords)) {
           fuelRecords = data.fuelRecords;
@@ -1312,36 +1183,35 @@
 
         sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
         localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
-
         unlockCockpit(data.user);
-        notifyToast("✅ Conectado à sua Planilha!");
-      } catch (err) {
+        notifyToast("✅ Conectado à Planilha!");
+      } catch (_) {
         btn.disabled = false;
-        btn.textContent = "Entrar no App";
-        showLoginError("Sem conexão com a internet ou planilha.");
+        btn.textContent = "Entrar no Cockpit";
+        showLoginError("Sem conexão com a internet.");
       }
     }
 
     function unlockCockpit(user) {
-      document.getElementById("loginOverlay").style.display = "none";
-      document.getElementById("loggedUserDisplay").textContent = user;
-      renderEverything();
+      $("loginOverlay").style.display = "none";
+      $("loggedUserDisplay").textContent = user;
+      scheduleRender();
     }
 
-    async function logoutUser() {
-      document.getElementById("menuSheet").style.display = "none";
+    function logoutUser() {
+      closeSheet("menuSheet");
       activeSession = null;
       localStorage.removeItem(KEY_SESSION);
       sessionStorage.removeItem(KEY_SESSION);
-      document.getElementById("loginPass").value = "";
-      document.getElementById("loginOverlay").style.display = "flex";
+      $("loginPass").value = "";
+      $("loginOverlay").style.display = "flex";
     }
 
     async function changeUserPassword() {
-      const oldPass = document.getElementById("cfgOldPass").value.trim();
-      const newPass = document.getElementById("cfgNewPass").value.trim();
+      const oldPass = $("cfgOldPass").value.trim();
+      const newPass = $("cfgNewPass").value.trim();
       if (!oldPass || newPass.length < 4) {
-        alert("Digite a senha atual e uma nova senha de pelo menos 4 dígitos.");
+        alert("Informe a senha atual e uma nova senha (mín. 4 caracteres).");
         return;
       }
       try {
@@ -1353,29 +1223,29 @@
         });
         const data = await res.json();
         if (!data || !data.ok) {
-          alert((data && data.error) || "Erro ao alterar senha.");
+          alert((data && data.error) || "Erro ao atualizar senha.");
           return;
         }
         activeSession.token = data.token;
         localStorage.setItem(KEY_SESSION, JSON.stringify(activeSession));
-        document.getElementById("accountModal").style.display = "none";
-        notifyToast("🔒 Senha alterada na planilha!");
-      } catch (e) {
-        alert("Erro de conexão.");
+        closeSheet("accountModal");
+        notifyToast("🔒 Senha atualizada!");
+      } catch (_) {
+        alert("Falha de conexão.");
       }
     }
 
     function setSyncState(syncing) {
-      const dot = document.getElementById("syncDot");
-      const lbl = document.getElementById("syncLabel");
+      const dot = $("syncDot");
+      const lbl = $("syncLabel");
       if (!dot || !lbl) return;
-      if (syncing) {
-        dot.className = "sync-dot syncing";
-        lbl.textContent = "Salvando...";
-      } else {
-        dot.className = "sync-dot";
-        lbl.textContent = sheetsConfig.lastSync ? sheetsConfig.lastSync : "Salvo";
-      }
+      dot.className = syncing ? "sync-dot syncing" : "sync-dot";
+      lbl.textContent = syncing ? "Sync..." : (sheetsConfig.lastSync || "Salvo");
+    }
+
+    function scheduleCloudPush() {
+      if (syncTimer) clearTimeout(syncTimer);
+      syncTimer = setTimeout(() => pushToCloudNow(true), 350);
     }
 
     async function pushToCloudNow(silent = true) {
@@ -1397,7 +1267,7 @@
         if (data && data.ok) {
           sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
           localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
-          if (!silent) notifyToast("☁️ Salvo na Planilha Google!");
+          if (!silent) notifyToast("☁️ Sincronizado na Planilha!");
         }
       } catch (_) {}
       setSyncState(false);
@@ -1424,39 +1294,31 @@
           }
           sheetsConfig.lastSync = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
           localStorage.setItem(KEY_SHEETS, JSON.stringify(sheetsConfig));
-          renderEverything();
-          if (!silent) notifyToast("🔄 Atualizado da Planilha!");
+          scheduleRender();
+          if (!silent) notifyToast("🔄 Atualizado da Nuvem!");
         }
       } catch (_) {}
       setSyncState(false);
     }
 
-    // Navegação Mobile
     function switchPaneById(paneId) {
+      haptic();
       document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
       document.querySelectorAll(".b-tab").forEach(b => {
         b.classList.toggle("active", b.getAttribute("data-pane") === paneId);
       });
-      const el = document.getElementById(paneId);
+      const el = $(paneId);
       if (el) el.classList.add("active");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function openQuickSheet() {
-      document.getElementById("quickSheet").style.display = "flex";
-    }
-
-    function openMenuSheet() {
-      document.getElementById("menuSheet").style.display = "flex";
-    }
+    function openSheet(id) { haptic(); $(id).style.display = "flex"; }
+    function closeSheet(id) { $(id).style.display = "none"; }
 
     function quickJump(paneId, inputId) {
-      document.getElementById("quickSheet").style.display = "none";
+      closeSheet("quickSheet");
       switchPaneById(paneId);
-      setTimeout(() => {
-        const inp = document.getElementById(inputId);
-        if (inp) inp.focus();
-      }, 150);
+      setTimeout(() => { const inp = $(inputId); if (inp) inp.focus(); }, 120);
     }
 
     function todayIso() {
@@ -1471,78 +1333,79 @@
       return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
     }
 
-    function fmtMoney(v) {
-      return (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+    const numFmt = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const intFmt = new Intl.NumberFormat("pt-BR");
+    const fmtMoney = v => numFmt.format(Number(v) || 0);
+    const fmtInt = v => intFmt.format(Math.round(Number(v) || 0));
 
     function notifyToast(msg) {
-      const el = document.getElementById("toastPopup");
+      const el = $("toastPopup");
       el.textContent = msg;
       el.style.display = "block";
-      setTimeout(() => { el.style.display = "none"; }, 2400);
+      setTimeout(() => { el.style.display = "none"; }, 2200);
     }
 
     function getAllOdometers() {
-      return [
-        ...fuelRecords.map(r => Number(r.odometerKm || 0)),
-        ...maintRecords.map(m => Number(m.odometerKm || 0)),
-        ...odoRecords.map(o => Number(o.odometerKm || 0))
-      ].filter(v => v > 0);
+      const out = [];
+      for (let i = 0; i < fuelRecords.length; i++) if (fuelRecords[i].odometerKm > 0) out.push(Number(fuelRecords[i].odometerKm));
+      for (let i = 0; i < maintRecords.length; i++) if (maintRecords[i].odometerKm > 0) out.push(Number(maintRecords[i].odometerKm));
+      for (let i = 0; i < odoRecords.length; i++) if (odoRecords[i].odometerKm > 0) out.push(Number(odoRecords[i].odometerKm));
+      return out;
     }
 
     function getLatestOdometer() {
-      const allOdos = getAllOdometers();
-      return allOdos.length ? Math.max(...allOdos) : 0;
+      const a = getAllOdometers();
+      return a.length ? Math.max(...a) : 0;
     }
 
     function getMinOdometer() {
-      const allOdos = getAllOdometers();
-      return allOdos.length ? Math.min(...allOdos) : 0;
+      const a = getAllOdometers();
+      return a.length ? Math.min(...a) : 0;
     }
 
     function addQuickOdo(deltaKm) {
-      const base = parseFloat(document.getElementById("inFuelOdo").value) || getLatestOdometer() || 0;
-      document.getElementById("inFuelOdo").value = Math.round(base + deltaKm);
+      haptic();
+      const base = parseFloat($("inFuelOdo").value) || getLatestOdometer() || 0;
+      $("inFuelOdo").value = Math.round(base + deltaKm);
       updateFuelPreview();
     }
 
-    // Funções do Marcador de Quilometragem Independente
     function addQuickMarkerOdo(deltaKm) {
-      const base = parseFloat(document.getElementById("inOdoMarkerKm").value) || getLatestOdometer() || 0;
-      document.getElementById("inOdoMarkerKm").value = Math.round(base + deltaKm);
+      haptic();
+      const base = parseFloat($("inOdoMarkerKm").value) || getLatestOdometer() || 0;
+      $("inOdoMarkerKm").value = Math.round(base + deltaKm);
       updateOdoDeltaPreview();
     }
 
     function selectOdoType(type, btn) {
+      haptic();
       selectedOdoType = type;
       document.querySelectorAll("#odoTypeGrid .seg-btn").forEach(c => c.className = "seg-btn");
       btn.classList.add("active-blue");
     }
 
     function updateOdoDeltaPreview() {
-      const odo = parseFloat(document.getElementById("inOdoMarkerKm").value) || 0;
+      const odo = parseFloat($("inOdoMarkerKm").value) || 0;
       const last = getLatestOdometer();
-      const hint = document.getElementById("odoDeltaHint");
+      const hint = $("odoDeltaHint");
       if (!hint) return;
       if (odo > last && last > 0) {
-        hint.textContent = `⚡ +${(odo - last).toLocaleString("pt-BR")} km rodados desde a última marcação (${last.toLocaleString("pt-BR")} km)`;
+        hint.textContent = `⚡ +${fmtInt(odo - last)} km rodados desde ${fmtInt(last)} km`;
       } else if (last > 0) {
-        hint.textContent = `📍 Última quilometragem registrada no Argo: ${last.toLocaleString("pt-BR")} km`;
+        hint.textContent = `📍 Último KM do Argo: ${fmtInt(last)} km`;
       } else {
-        hint.textContent = "Digite o KM do painel para registrar no histórico sem precisar abastecer.";
+        hint.textContent = "Registre a quilometragem do painel mesmo sem abastecer.";
       }
     }
 
     function saveOdoMarker() {
-      const odo = parseFloat(document.getElementById("inOdoMarkerKm").value) || 0;
-      const dateIso = document.getElementById("inOdoMarkerDate").value || todayIso();
-      const notes = document.getElementById("inOdoMarkerNotes").value.trim();
-      const editId = document.getElementById("odoEditId").value;
+      haptic();
+      const odo = parseFloat($("inOdoMarkerKm").value) || 0;
+      const dateIso = $("inOdoMarkerDate").value || todayIso();
+      const notes = $("inOdoMarkerNotes").value.trim();
+      const editId = $("odoEditId").value;
 
-      if (odo <= 0) {
-        alert("Informe a quilometragem atual no painel do Argo.");
-        return;
-      }
+      if (odo <= 0) { alert("Informe o KM atual no painel."); return; }
 
       const rec = {
         id: editId ? Number(editId) : Date.now(),
@@ -1553,70 +1416,61 @@
         notes
       };
 
-      if (editId) {
-        odoRecords = odoRecords.map(o => o.id === Number(editId) ? rec : o);
-      } else {
-        odoRecords.unshift(rec);
-      }
+      if (editId) odoRecords = odoRecords.map(o => o.id === Number(editId) ? rec : o);
+      else odoRecords.unshift(rec);
 
       odoRecords.sort((a, b) => b.odometerKm - a.odometerKm || b.id - a.id);
       localStorage.setItem(KEY_ODO, JSON.stringify(odoRecords));
       resetOdoForm();
-      renderEverything();
-      notifyToast("📍 Quilometragem registrada no histórico!");
-      pushToCloudNow(true);
+      scheduleRender();
+      notifyToast("📍 Quilometragem salva!");
+      scheduleCloudPush();
     }
 
     function editOdoMarker(id) {
       const o = odoRecords.find(x => x.id === id);
       if (!o) return;
       switchPaneById("pane-timeline");
-      document.getElementById("odoEditId").value = o.id;
-      document.getElementById("inOdoMarkerKm").value = o.odometerKm;
-      document.getElementById("inOdoMarkerDate").value = o.dateIso || todayIso();
-      document.getElementById("inOdoMarkerNotes").value = o.notes || "";
+      $("odoEditId").value = o.id;
+      $("inOdoMarkerKm").value = o.odometerKm;
+      $("inOdoMarkerDate").value = o.dateIso || todayIso();
+      $("inOdoMarkerNotes").value = o.notes || "";
       selectedOdoType = o.markerType || "Início do Dia";
-      document.querySelectorAll("#odoTypeGrid .seg-btn").forEach(c => {
-        c.className = "seg-btn";
-        if ((o.markerType || "").includes(c.textContent.replace(/^[^\wÀ-ÿ]+/, "").trim().split(" ")[0])) {
-          c.classList.add("active-blue");
-        }
-      });
-      document.getElementById("odoFormTitle").textContent = "✏️ Editando Quilometragem";
-      document.getElementById("btnSaveOdo").textContent = "💾 Salvar Alteração de KM";
-      document.getElementById("btnCancelOdo").style.display = "inline-flex";
+      $("odoFormTitle").textContent = "✏️ Editando Quilometragem";
+      $("btnSaveOdo").textContent = "💾 Salvar Alteração";
+      $("btnCancelOdo").style.display = "inline-flex";
       updateOdoDeltaPreview();
     }
 
     function deleteOdoMarker(id) {
-      if (!confirm("Remover esta marcação de quilometragem?")) return;
+      if (!confirm("Excluir esta marcação de KM?")) return;
       odoRecords = odoRecords.filter(x => x.id !== id);
       localStorage.setItem(KEY_ODO, JSON.stringify(odoRecords));
-      renderEverything();
-      pushToCloudNow(true);
+      scheduleRender();
+      scheduleCloudPush();
     }
 
     function resetOdoForm() {
-      document.getElementById("odoEditId").value = "";
-      document.getElementById("inOdoMarkerKm").value = "";
-      document.getElementById("inOdoMarkerNotes").value = "";
-      document.getElementById("inOdoMarkerDate").value = todayIso();
-      document.getElementById("odoFormTitle").textContent = "📍 Marcador de Quilometragem";
-      document.getElementById("btnSaveOdo").textContent = "📍 Salvar Quilometragem no Histórico";
-      document.getElementById("btnCancelOdo").style.display = "none";
+      $("odoEditId").value = "";
+      $("inOdoMarkerKm").value = "";
+      $("inOdoMarkerNotes").value = "";
+      $("inOdoMarkerDate").value = todayIso();
+      $("odoFormTitle").textContent = "📍 Marcador de Quilometragem";
+      $("btnSaveOdo").textContent = "📍 Salvar Quilometragem";
+      $("btnCancelOdo").style.display = "none";
       updateOdoDeltaPreview();
     }
 
     function setQuickFuelAmount(val) {
-      document.getElementById("inFuelAmount").value = val.toFixed(2);
+      haptic();
+      $("inFuelAmount").value = val.toFixed(2);
       onDrivvoTriadInput("amount");
     }
 
     function onDrivvoTriadInput(changedField) {
-      const amountEl = document.getElementById("inFuelAmount");
-      const priceEl = document.getElementById("inFuelPriceL");
-      const litersEl = document.getElementById("inFuelLiters");
-
+      const amountEl = $("inFuelAmount");
+      const priceEl = $("inFuelPriceL");
+      const litersEl = $("inFuelLiters");
       const amount = parseFloat(amountEl.value) || 0;
       const priceL = parseFloat(priceEl.value) || 0;
       const liters = parseFloat(litersEl.value) || 0;
@@ -1631,6 +1485,7 @@
     }
 
     function selectFuelType(type, btn) {
+      haptic();
       selectedFuelType = type;
       document.querySelectorAll("#fuelTypeGrid .seg-btn").forEach(c => c.className = "seg-btn");
       btn.classList.add("active-red");
@@ -1638,47 +1493,51 @@
     }
 
     function selectFuelPay(pay, btn) {
+      haptic();
       selectedFuelPay = pay;
       document.querySelectorAll("#fuelPayGrid .seg-btn").forEach(c => c.className = "seg-btn");
       btn.classList.add("active-blue");
     }
 
     function selectMaintPay(pay, btn) {
+      haptic();
       selectedMaintPay = pay;
       document.querySelectorAll("#maintPayGrid .seg-btn").forEach(c => c.className = "seg-btn");
       btn.classList.add("active-blue");
     }
 
     function fillQuickPart(name) {
-      const el = document.getElementById("inMaintPart");
+      haptic();
+      const el = $("inMaintPart");
       el.value = name;
-      const odoEl = document.getElementById("inMaintOdo");
+      const odoEl = $("inMaintOdo");
       if (odoEl && !odoEl.value && getLatestOdometer() > 0) odoEl.value = getLatestOdometer();
       el.focus();
     }
 
     function updateFuelPreview() {
-      const amount = parseFloat(document.getElementById("inFuelAmount").value) || 0;
-      const priceL = parseFloat(document.getElementById("inFuelPriceL").value) || 0;
-      const liters = (amount > 0 && priceL > 0) ? (amount / priceL) : (parseFloat(document.getElementById("inFuelLiters").value) || 0);
-      document.getElementById("fuelCalcLiters").textContent = `${fmtMoney(liters)} L`;
+      const amount = parseFloat($("inFuelAmount").value) || 0;
+      const priceL = parseFloat($("inFuelPriceL").value) || 0;
+      const liters = (amount > 0 && priceL > 0) ? (amount / priceL) : (parseFloat($("inFuelLiters").value) || 0);
+      $("fuelCalcLiters").textContent = `${fmtMoney(liters)} L`;
     }
 
     function updateMaintPreview() {
-      const p = parseFloat(document.getElementById("inMaintPartCost").value) || 0;
-      const l = parseFloat(document.getElementById("inMaintLaborCost").value) || 0;
-      document.getElementById("maintCalcTotal").textContent = `R$ ${fmtMoney(p + l)}`;
+      const p = parseFloat($("inMaintPartCost").value) || 0;
+      const l = parseFloat($("inMaintLaborCost").value) || 0;
+      $("maintCalcTotal").textContent = `R$ ${fmtMoney(p + l)}`;
     }
 
     function saveFuel() {
-      const odo = parseFloat(document.getElementById("inFuelOdo").value) || 0;
-      const amount = parseFloat(document.getElementById("inFuelAmount").value) || 0;
-      const priceL = parseFloat(document.getElementById("inFuelPriceL").value) || 0;
-      const dateIso = document.getElementById("inFuelDate").value || todayIso();
-      const station = document.getElementById("inFuelStation").value.trim();
-      const editId = document.getElementById("fuelEditId").value;
+      haptic();
+      const odo = parseFloat($("inFuelOdo").value) || 0;
+      const amount = parseFloat($("inFuelAmount").value) || 0;
+      const priceL = parseFloat($("inFuelPriceL").value) || 0;
+      const dateIso = $("inFuelDate").value || todayIso();
+      const station = $("inFuelStation").value.trim();
+      const editId = $("fuelEditId").value;
 
-      if (odo <= 0) { alert("Informe a quilometragem atual do Argo."); return; }
+      if (odo <= 0) { alert("Informe a quilometragem atual."); return; }
       if (amount <= 0) { alert("Informe o valor abastecido (R$)."); return; }
       if (priceL <= 0) { alert("Informe o preço por litro (R$/L)."); return; }
 
@@ -1695,47 +1554,33 @@
         stationName: station
       };
 
-      if (editId) {
-        fuelRecords = fuelRecords.map(r => r.id === Number(editId) ? rec : r);
-      } else {
-        fuelRecords.unshift(rec);
-      }
+      if (editId) fuelRecords = fuelRecords.map(r => r.id === Number(editId) ? rec : r);
+      else fuelRecords.unshift(rec);
 
       fuelRecords.sort((a, b) => b.odometerKm - a.odometerKm || b.id - a.id);
       localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
       resetFuelForm();
-      renderEverything();
+      scheduleRender();
       notifyToast("⛽ Abastecimento salvo!");
-      pushToCloudNow(true);
+      scheduleCloudPush();
     }
 
     function editFuel(id) {
       const r = fuelRecords.find(x => x.id === id);
       if (!r) return;
       switchPaneById("pane-fuel");
-      document.getElementById("fuelEditId").value = r.id;
-      document.getElementById("inFuelOdo").value = r.odometerKm;
-      document.getElementById("inFuelAmount").value = r.totalAmountPaid;
-      document.getElementById("inFuelPriceL").value = r.pricePerLiter;
-      document.getElementById("inFuelLiters").value = (r.totalAmountPaid / r.pricePerLiter).toFixed(2);
-      document.getElementById("inFuelDate").value = r.dateIso || todayIso();
-      document.getElementById("inFuelStation").value = r.stationName || "";
-
+      $("fuelEditId").value = r.id;
+      $("inFuelOdo").value = r.odometerKm;
+      $("inFuelAmount").value = r.totalAmountPaid;
+      $("inFuelPriceL").value = r.pricePerLiter;
+      $("inFuelLiters").value = (r.totalAmountPaid / r.pricePerLiter).toFixed(2);
+      $("inFuelDate").value = r.dateIso || todayIso();
+      $("inFuelStation").value = r.stationName || "";
       selectedFuelType = r.fuelType;
-      document.querySelectorAll("#fuelTypeGrid .seg-btn").forEach(c => {
-        c.className = "seg-btn";
-        if (r.fuelType.includes(c.textContent.trim())) c.classList.add("active-red");
-      });
-
       selectedFuelPay = r.paymentMethod;
-      document.querySelectorAll("#fuelPayGrid .seg-btn").forEach(c => {
-        c.className = "seg-btn";
-        if (c.textContent.includes(r.paymentMethod.split(" ")[0])) c.classList.add("active-blue");
-      });
-
-      document.getElementById("fuelFormTitle").textContent = "✏️ Editando Abastecimento";
-      document.getElementById("btnSaveFuel").textContent = "💾 Salvar Alteração";
-      document.getElementById("btnCancelFuel").style.display = "inline-flex";
+      $("fuelFormTitle").textContent = "✏️ Editando Abastecimento";
+      $("btnSaveFuel").textContent = "💾 Salvar Alteração";
+      $("btnCancelFuel").style.display = "inline-flex";
       updateFuelPreview();
     }
 
@@ -1743,36 +1588,37 @@
       if (!confirm("Excluir este abastecimento?")) return;
       fuelRecords = fuelRecords.filter(x => x.id !== id);
       localStorage.setItem(KEY_FUEL, JSON.stringify(fuelRecords));
-      renderEverything();
-      pushToCloudNow(true);
+      scheduleRender();
+      scheduleCloudPush();
     }
 
     function resetFuelForm() {
-      document.getElementById("fuelEditId").value = "";
-      document.getElementById("inFuelAmount").value = "";
-      document.getElementById("inFuelLiters").value = "";
-      document.getElementById("inFuelStation").value = "";
-      document.getElementById("inFuelDate").value = todayIso();
+      $("fuelEditId").value = "";
+      $("inFuelAmount").value = "";
+      $("inFuelLiters").value = "";
+      $("inFuelStation").value = "";
+      $("inFuelDate").value = todayIso();
       if (fuelRecords.length > 0) {
-        document.getElementById("inFuelOdo").value = fuelRecords[0].odometerKm;
-        document.getElementById("inFuelPriceL").value = fuelRecords[0].pricePerLiter;
+        $("inFuelOdo").value = getLatestOdometer();
+        $("inFuelPriceL").value = fuelRecords[0].pricePerLiter;
       }
-      document.getElementById("fuelFormTitle").textContent = "⛽ Novo Abastecimento";
-      document.getElementById("btnSaveFuel").textContent = "✅ Salvar Abastecimento";
-      document.getElementById("btnCancelFuel").style.display = "none";
+      $("fuelFormTitle").textContent = "⛽ Novo Abastecimento";
+      $("btnSaveFuel").textContent = "✅ Salvar Abastecimento";
+      $("btnCancelFuel").style.display = "none";
       updateFuelPreview();
     }
 
     function saveMaint() {
-      const partName = document.getElementById("inMaintPart").value.trim();
-      const dateIso = document.getElementById("inMaintDate").value || todayIso();
-      const who = document.getElementById("inMaintWho").value.trim() || "Oficina";
-      const where = document.getElementById("inMaintWhere").value.trim() || "Loja";
-      const partCost = parseFloat(document.getElementById("inMaintPartCost").value) || 0;
-      const laborCost = parseFloat(document.getElementById("inMaintLaborCost").value) || 0;
-      const odo = parseFloat(document.getElementById("inMaintOdo").value) || getLatestOdometer() || 0;
-      const notes = document.getElementById("inMaintNotes").value.trim();
-      const editId = document.getElementById("maintEditId").value;
+      haptic();
+      const partName = $("inMaintPart").value.trim();
+      const dateIso = $("inMaintDate").value || todayIso();
+      const who = $("inMaintWho").value.trim() || "Oficina";
+      const where = $("inMaintWhere").value.trim() || "Loja";
+      const partCost = parseFloat($("inMaintPartCost").value) || 0;
+      const laborCost = parseFloat($("inMaintLaborCost").value) || 0;
+      const odo = parseFloat($("inMaintOdo").value) || getLatestOdometer() || 0;
+      const notes = $("inMaintNotes").value.trim();
+      const editId = $("maintEditId").value;
 
       if (!partName) { alert("Informe qual peça foi trocada."); return; }
       if (partCost + laborCost <= 0) { alert("Informe o valor da peça ou mão de obra."); return; }
@@ -1792,36 +1638,32 @@
         notes
       };
 
-      if (editId) {
-        maintRecords = maintRecords.map(m => m.id === Number(editId) ? rec : m);
-      } else {
-        maintRecords.unshift(rec);
-      }
+      if (editId) maintRecords = maintRecords.map(m => m.id === Number(editId) ? rec : m);
+      else maintRecords.unshift(rec);
 
       localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
       resetMaintForm();
-      renderEverything();
+      scheduleRender();
       notifyToast("🔧 Peça salva!");
-      pushToCloudNow(true);
+      scheduleCloudPush();
     }
 
     function editMaint(id) {
       const m = maintRecords.find(x => x.id === id);
       if (!m) return;
       switchPaneById("pane-maint");
-      document.getElementById("maintEditId").value = m.id;
-      document.getElementById("inMaintPart").value = m.partName;
-      document.getElementById("inMaintDate").value = m.dateIso || todayIso();
-      document.getElementById("inMaintWho").value = m.mechanicOrWorkshop;
-      document.getElementById("inMaintWhere").value = m.whereBought;
-      document.getElementById("inMaintPartCost").value = m.partCost;
-      document.getElementById("inMaintLaborCost").value = m.laborCost;
-      document.getElementById("inMaintOdo").value = m.odometerKm || "";
-      document.getElementById("inMaintNotes").value = m.notes || "";
-
-      document.getElementById("maintFormTitle").textContent = "✏️ Editando Peça";
-      document.getElementById("btnSaveMaint").textContent = "💾 Salvar Alteração";
-      document.getElementById("btnCancelMaint").style.display = "inline-flex";
+      $("maintEditId").value = m.id;
+      $("inMaintPart").value = m.partName;
+      $("inMaintDate").value = m.dateIso || todayIso();
+      $("inMaintWho").value = m.mechanicOrWorkshop;
+      $("inMaintWhere").value = m.whereBought;
+      $("inMaintPartCost").value = m.partCost;
+      $("inMaintLaborCost").value = m.laborCost;
+      $("inMaintOdo").value = m.odometerKm || "";
+      $("inMaintNotes").value = m.notes || "";
+      $("maintFormTitle").textContent = "✏️ Editando Peça";
+      $("btnSaveMaint").textContent = "💾 Salvar Alteração";
+      $("btnCancelMaint").style.display = "inline-flex";
       updateMaintPreview();
     }
 
@@ -1829,56 +1671,49 @@
       if (!confirm("Remover esta peça do histórico?")) return;
       maintRecords = maintRecords.filter(x => x.id !== id);
       localStorage.setItem(KEY_MAINT, JSON.stringify(maintRecords));
-      renderEverything();
-      pushToCloudNow(true);
+      scheduleRender();
+      scheduleCloudPush();
     }
 
     function resetMaintForm() {
-      document.getElementById("maintEditId").value = "";
-      document.getElementById("inMaintPart").value = "";
-      document.getElementById("inMaintDate").value = todayIso();
-      document.getElementById("inMaintWho").value = "";
-      document.getElementById("inMaintWhere").value = "";
-      document.getElementById("inMaintPartCost").value = "";
-      document.getElementById("inMaintLaborCost").value = "";
-      document.getElementById("inMaintNotes").value = "";
-      document.getElementById("maintFormTitle").textContent = "🔧 Registrar Peça Trocada";
-      document.getElementById("btnSaveMaint").textContent = "✅ Salvar Peça Trocada";
-      document.getElementById("btnCancelMaint").style.display = "none";
+      $("maintEditId").value = "";
+      $("inMaintPart").value = "";
+      $("inMaintDate").value = todayIso();
+      $("inMaintWho").value = "";
+      $("inMaintWhere").value = "";
+      $("inMaintPartCost").value = "";
+      $("inMaintLaborCost").value = "";
+      $("inMaintNotes").value = "";
+      $("maintFormTitle").textContent = "🔧 Registrar Peça Trocada";
+      $("btnSaveMaint").textContent = "✅ Salvar Peça Trocada";
+      $("btnCancelMaint").style.display = "none";
       updateMaintPreview();
     }
 
-    function payTagClass(p) {
-      if (p === "Crédito") return "pay-cred";
-      if (p === "Débito") return "pay-deb";
-      return "pay-pix";
-    }
-
-    const KEY_CUSTOM_KML = "argo_2024_25_custom_kml_v1";
-    let customKmL = parseFloat(localStorage.getItem(KEY_CUSTOM_KML) || "12.8") || 12.8;
+    const payTagClass = p => p === "Crédito" ? "pay-cred" : (p === "Débito" ? "pay-deb" : "pay-pix");
 
     function onCustomKmLChange(val) {
       const parsed = parseFloat(val);
       if (parsed && parsed > 0) {
         customKmL = parsed;
         localStorage.setItem(KEY_CUSTOM_KML, String(customKmL));
-        const topInp = document.getElementById("inCustomKmL");
-        const flexInp = document.getElementById("flexGasKmL");
+        const topInp = $("inCustomKmL");
+        const flexInp = $("flexGasKmL");
         if (topInp && document.activeElement !== topInp) topInp.value = customKmL;
         if (flexInp && document.activeElement !== flexInp) flexInp.value = customKmL;
-        renderEverything();
+        scheduleRender();
       }
     }
 
     function calcDrivvoFlex() {
-      const ethP = parseFloat(document.getElementById("flexEthPrice").value) || 0;
-      const gasP = parseFloat(document.getElementById("flexGasPrice").value) || 0;
-      const ethK = Math.max(1, parseFloat((document.getElementById("flexEthKmL") || {}).value) || 9.0);
-      const gasK = Math.max(1, parseFloat((document.getElementById("flexGasKmL") || {}).value) || customKmL || 12.8);
+      const ethP = parseFloat($("flexEthPrice").value) || 0;
+      const gasP = parseFloat($("flexGasPrice").value) || 0;
+      const ethK = Math.max(1, parseFloat($("flexEthKmL").value) || 9.0);
+      const gasK = Math.max(1, parseFloat($("flexGasKmL").value) || customKmL || 12.8);
       const costEth = ethP / ethK;
       const costGas = gasP / gasK;
-      const titleEl = document.getElementById("flexWinnerTitle");
-      const subEl = document.getElementById("flexWinnerSub");
+      const titleEl = $("flexWinnerTitle");
+      const subEl = $("flexWinnerSub");
 
       if (costEth < costGas) {
         titleEl.textContent = "🌱 COMPENSA ABASTECER COM ETANOL";
@@ -1894,7 +1729,8 @@
     }
 
     function applyFlexWinnerToFuel() {
-      document.getElementById("inFuelPriceL").value = lastFlexWinner.priceL.toFixed(2);
+      haptic();
+      $("inFuelPriceL").value = lastFlexWinner.priceL.toFixed(2);
       selectedFuelType = lastFlexWinner.fuelType;
       document.querySelectorAll("#fuelTypeGrid .seg-btn").forEach(c => {
         c.className = "seg-btn";
@@ -1902,38 +1738,55 @@
       });
       onDrivvoTriadInput("price");
       switchPaneById("pane-fuel");
-      notifyToast(`⚡ ${selectedFuelType} selecionado!`);
+      notifyToast(`⚡ ${selectedFuelType} aplicado!`);
+    }
+
+    function scheduleRender() {
+      if (renderPending) return;
+      renderPending = true;
+      requestAnimationFrame(() => {
+        renderPending = false;
+        renderEverything();
+      });
     }
 
     function renderEverything() {
-      const totalFuel = fuelRecords.reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
-      const totalLiters = fuelRecords.reduce((s, r) => s + (Number(r.totalAmountPaid || 0) / Math.max(0.01, Number(r.pricePerLiter || 1))), 0);
-      const fuelCred = fuelRecords.filter(r => r.paymentMethod === "Crédito").reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
-      const fuelDeb = fuelRecords.filter(r => r.paymentMethod === "Débito").reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
-      const fuelPix = fuelRecords.filter(r => r.paymentMethod === "PIX / Dinheiro").reduce((s, r) => s + Number(r.totalAmountPaid || 0), 0);
+      let totalFuel = 0, totalLiters = 0, fuelCred = 0, fuelDeb = 0, fuelPix = 0;
+      for (let i = 0; i < fuelRecords.length; i++) {
+        const r = fuelRecords[i];
+        const amt = Number(r.totalAmountPaid || 0);
+        const pr = Math.max(0.01, Number(r.pricePerLiter || 1));
+        totalFuel += amt;
+        totalLiters += amt / pr;
+        if (r.paymentMethod === "Crédito") fuelCred += amt;
+        else if (r.paymentMethod === "Débito") fuelDeb += amt;
+        else fuelPix += amt;
+      }
 
-      const totalParts = maintRecords.reduce((s, m) => s + Number(m.partCost || 0), 0);
-      const totalLabor = maintRecords.reduce((s, m) => s + Number(m.laborCost || 0), 0);
+      let totalParts = 0, totalLabor = 0, maintCred = 0, maintDeb = 0, maintPix = 0;
+      for (let i = 0; i < maintRecords.length; i++) {
+        const m = maintRecords[i];
+        const p = Number(m.partCost || 0);
+        const l = Number(m.laborCost || 0);
+        const tot = p + l;
+        totalParts += p;
+        totalLabor += l;
+        if (m.paymentMethod === "Crédito") maintCred += tot;
+        else if (m.paymentMethod === "Débito") maintDeb += tot;
+        else maintPix += tot;
+      }
+
       const totalMaint = totalParts + totalLabor;
-      const maintCred = maintRecords.filter(m => m.paymentMethod === "Crédito").reduce((s, m) => s + Number(m.partCost || 0) + Number(m.laborCost || 0), 0);
-      const maintDeb = maintRecords.filter(m => m.paymentMethod === "Débito").reduce((s, m) => s + Number(m.partCost || 0) + Number(m.laborCost || 0), 0);
-      const maintPix = maintRecords.filter(m => m.paymentMethod === "PIX / Dinheiro").reduce((s, m) => s + Number(m.partCost || 0) + Number(m.laborCost || 0), 0);
-
       const grandTotal = totalFuel + totalMaint;
       const maxOdo = getLatestOdometer();
       const minOdo = getMinOdometer();
       const totalSpanKm = Math.max(0, maxOdo - minOdo);
 
-      // Usa a Média do Argo que o usuário definiu no campo editável
       const avgKmL = Math.max(1, customKmL || 12.8);
-      const topInp = document.getElementById("inCustomKmL");
-      if (topInp && document.activeElement !== topInp) {
-        topInp.value = avgKmL;
-      }
-      const flexGasInp = document.getElementById("flexGasKmL");
-      if (flexGasInp && document.activeElement !== flexGasInp) {
-        flexGasInp.value = avgKmL;
-      }
+      const topInp = $("inCustomKmL");
+      if (topInp && document.activeElement !== topInp) topInp.value = avgKmL;
+      const flexGasInp = $("flexGasKmL");
+      if (flexGasInp && document.activeElement !== flexGasInp) flexGasInp.value = avgKmL;
 
       const lastPriceL = fuelRecords.length > 0 ? Number(fuelRecords[0].pricePerLiter || 5.89) : 5.89;
       const effectiveKm = totalLiters > 0 ? (totalLiters * avgKmL) : 0;
@@ -1941,62 +1794,56 @@
       const maintCostKm = totalMaint > 0 ? (totalMaint / Math.max(effectiveKm, 10000)) : 0;
       const realCostKm = (fuelCostKm + maintCostKm) > 0 ? (fuelCostKm + maintCostKm) : 0.75;
 
-      document.getElementById("topOdoText").textContent = `📍 ${maxOdo.toLocaleString("pt-BR")} km ✏️`;
-      const spanLbl = document.getElementById("odoTotalSpanLabel");
-      if (spanLbl) spanLbl.textContent = `Trecho: +${totalSpanKm.toLocaleString("pt-BR")} km`;
+      $("topOdoText").textContent = `📍 ${fmtInt(maxOdo)} km ✏️`;
+      $("odoTotalSpanLabel").textContent = `Trecho: +${fmtInt(totalSpanKm)} km`;
       updateOdoDeltaPreview();
 
-      document.getElementById("heroCostKm").textContent = `R$ ${fmtMoney(realCostKm)}`;
-      document.getElementById("kpiGrandTotal").textContent = `R$ ${fmtMoney(grandTotal)}`;
-      document.getElementById("kpiFuelTotal").textContent = `R$ ${fmtMoney(totalFuel)}`;
-      document.getElementById("kpiMaintTotal").textContent = `R$ ${fmtMoney(totalMaint)}`;
+      $("heroCostKm").textContent = `R$ ${fmtMoney(realCostKm)}`;
+      $("kpiGrandTotal").textContent = `R$ ${fmtMoney(grandTotal)}`;
+      $("kpiFuelTotal").textContent = `R$ ${fmtMoney(totalFuel)}`;
+      $("kpiMaintTotal").textContent = `R$ ${fmtMoney(totalMaint)}`;
 
-      document.getElementById("legCred").textContent = `R$ ${fmtMoney(fuelCred + maintCred)}`;
-      document.getElementById("legDeb").textContent = `R$ ${fmtMoney(fuelDeb + maintDeb)}`;
-      document.getElementById("legPix").textContent = `R$ ${fmtMoney(fuelPix + maintPix)}`;
-      document.getElementById("legFuel").textContent = `R$ ${fmtMoney(totalFuel)}`;
-      document.getElementById("legParts").textContent = `R$ ${fmtMoney(totalParts)}`;
-      document.getElementById("legLabor").textContent = `R$ ${fmtMoney(totalLabor)}`;
+      $("legCred").textContent = `R$ ${fmtMoney(fuelCred + maintCred)}`;
+      $("legDeb").textContent = `R$ ${fmtMoney(fuelDeb + maintDeb)}`;
+      $("legPix").textContent = `R$ ${fmtMoney(fuelPix + maintPix)}`;
+      $("legFuel").textContent = `R$ ${fmtMoney(totalFuel)}`;
+      $("legParts").textContent = `R$ ${fmtMoney(totalParts)}`;
+      $("legLabor").textContent = `R$ ${fmtMoney(totalLabor)}`;
 
-      document.getElementById("thCostKm").value = realCostKm.toFixed(2);
-      document.getElementById("thCostKmLabel").textContent = `Custo: R$ ${fmtMoney(realCostKm)}/km`;
+      $("thCostKm").value = realCostKm.toFixed(2);
+      $("thCostKmLabel").textContent = `Custo: R$ ${fmtMoney(realCostKm)}/km`;
       evaluateRide();
       calcDrivvoFlex();
 
-      // Lista de Abastecimentos Compacta
-      const fBox = document.getElementById("fuelHistoryContainer");
-      if (!fuelRecords.length) {
-        fBox.innerHTML = `<div style="color:var(--muted); font-size:0.8rem; text-align:center; padding:12px;">Nenhum abastecimento ainda.</div>`;
-      } else {
-        fBox.innerHTML = fuelRecords.map(r => {
-          const lit = r.totalAmountPaid / r.pricePerLiter;
-          return `
-            <div class="feed-item" onclick="editFuel(${r.id})">
+      const fBox = $("fuelHistoryContainer");
+      fBox.innerHTML = !fuelRecords.length
+        ? `<div style="color:var(--muted); font-size:0.78rem; text-align:center; padding:10px;">Nenhum abastecimento ainda.</div>`
+        : fuelRecords.map(r => {
+            const lit = r.totalAmountPaid / Math.max(0.01, r.pricePerLiter);
+            return `<div class="feed-item" onclick="editFuel(${r.id})">
               <div class="feed-left">
                 <div class="feed-ico fuel">⛽</div>
                 <div class="feed-info">
                   <strong>${r.fuelType} • ${fmtMoney(lit)} L</strong>
-                  <span>${r.dateBr} • ${Number(r.odometerKm).toLocaleString("pt-BR")} km • R$ ${fmtMoney(r.pricePerLiter)}/L</span>
+                  <span>${r.dateBr} • ${fmtInt(r.odometerKm)} km • R$ ${fmtMoney(r.pricePerLiter)}/L</span>
                 </div>
               </div>
               <div class="feed-right">
                 <strong class="mono">R$ ${fmtMoney(r.totalAmountPaid)}</strong>
-                <span class="pay-tag ${payTagClass(r.paymentMethod)}">${r.paymentMethod}</span>
+                <div class="item-actions">
+                  <span class="pay-tag ${payTagClass(r.paymentMethod)}">${r.paymentMethod}</span>
+                  <button type="button" class="del-pill" onclick="event.stopPropagation(); deleteFuel(${r.id});">✕</button>
+                </div>
               </div>
-            </div>
-          `;
-        }).join("");
-      }
+            </div>`;
+          }).join("");
 
-      // Lista de Peças Trocadas Compacta
-      const mBox = document.getElementById("maintHistoryContainer");
-      if (!maintRecords.length) {
-        mBox.innerHTML = `<div style="color:var(--muted); font-size:0.8rem; text-align:center; padding:12px;">Nenhuma peça registrada ainda.</div>`;
-      } else {
-        mBox.innerHTML = maintRecords.map(m => {
-          const tot = Number(m.partCost || 0) + Number(m.laborCost || 0);
-          return `
-            <div class="feed-item" onclick="editMaint(${m.id})">
+      const mBox = $("maintHistoryContainer");
+      mBox.innerHTML = !maintRecords.length
+        ? `<div style="color:var(--muted); font-size:0.78rem; text-align:center; padding:10px;">Nenhuma peça registrada ainda.</div>`
+        : maintRecords.map(m => {
+            const tot = Number(m.partCost || 0) + Number(m.laborCost || 0);
+            return `<div class="feed-item" onclick="editMaint(${m.id})">
               <div class="feed-left">
                 <div class="feed-ico maint">🔧</div>
                 <div class="feed-info">
@@ -2007,131 +1854,111 @@
               </div>
               <div class="feed-right">
                 <strong class="mono">R$ ${fmtMoney(tot)}</strong>
-                <span class="pay-tag ${payTagClass(m.paymentMethod)}">${m.paymentMethod}</span>
+                <div class="item-actions">
+                  <span class="pay-tag ${payTagClass(m.paymentMethod)}">${m.paymentMethod}</span>
+                  <button type="button" class="del-pill" onclick="event.stopPropagation(); deleteMaint(${m.id});">✕</button>
+                </div>
               </div>
-            </div>
-          `;
-        }).join("");
-      }
+            </div>`;
+          }).join("");
 
-      // Linha do Tempo Unificada (Incluindo Marcador de Quilometragem Independente + Cálculo de +KM rodados)
-      const tlFilter = document.getElementById("filterTimelineType").value;
-      const tlBox = document.getElementById("timelineContainer");
+      const tlFilter = $("filterTimelineType").value;
+      const tlBox = $("timelineContainer");
       const allChrono = [];
-      odoRecords.forEach(o => allChrono.push({ kind: "ODO", odo: Number(o.odometerKm || 0), item: o }));
-      fuelRecords.forEach(r => allChrono.push({ kind: "FUEL", odo: Number(r.odometerKm || 0), item: r }));
-      maintRecords.forEach(m => allChrono.push({ kind: "MAINT", odo: Number(m.odometerKm || 0), item: m }));
+      for (let i = 0; i < odoRecords.length; i++) allChrono.push({ kind: "ODO", odo: Number(odoRecords[i].odometerKm || 0), item: odoRecords[i] });
+      for (let i = 0; i < fuelRecords.length; i++) allChrono.push({ kind: "FUEL", odo: Number(fuelRecords[i].odometerKm || 0), item: fuelRecords[i] });
+      for (let i = 0; i < maintRecords.length; i++) allChrono.push({ kind: "MAINT", odo: Number(maintRecords[i].odometerKm || 0), item: maintRecords[i] });
       allChrono.sort((a, b) => a.odo - b.odo);
 
-      // Calcula quantos KM foram rodados entre cada registro consecutivo de odômetro
       for (let i = 0; i < allChrono.length; i++) {
         allChrono[i].deltaKm = (i > 0 && allChrono[i].odo > allChrono[i - 1].odo)
           ? (allChrono[i].odo - allChrono[i - 1].odo)
           : 0;
       }
 
-      const events = allChrono
-        .filter(ev => tlFilter === "ALL" || ev.kind === tlFilter)
-        .reverse();
-
-      if (!events.length) {
-        tlBox.innerHTML = `<div style="color:var(--muted); font-size:0.8rem; text-align:center; padding:12px;">Sem registros neste filtro.</div>`;
-      } else {
-        tlBox.innerHTML = events.map(ev => {
-          const dTag = ev.deltaKm > 0 ? ` (+${ev.deltaKm.toLocaleString("pt-BR")} km)` : "";
-          if (ev.kind === "ODO") {
-            const o = ev.item;
-            return `
-              <div class="feed-item" onclick="editOdoMarker(${o.id})">
+      const events = allChrono.filter(ev => tlFilter === "ALL" || ev.kind === tlFilter).reverse();
+      tlBox.innerHTML = !events.length
+        ? `<div style="color:var(--muted); font-size:0.78rem; text-align:center; padding:10px;">Sem registros neste filtro.</div>`
+        : events.map(ev => {
+            const dTag = ev.deltaKm > 0 ? ` (+${fmtInt(ev.deltaKm)} km)` : "";
+            if (ev.kind === "ODO") {
+              const o = ev.item;
+              return `<div class="feed-item" onclick="editOdoMarker(${o.id})">
                 <div class="feed-left">
-                  <div class="feed-ico" style="background:rgba(56,189,248,0.16); color:#38bdf8;">📍</div>
+                  <div class="feed-ico odo">📍</div>
                   <div class="feed-info">
-                    <strong>${Number(o.odometerKm).toLocaleString("pt-BR")} km • ${o.markerType || "Odômetro"}</strong>
+                    <strong>${fmtInt(o.odometerKm)} km • ${o.markerType || "Odômetro"}</strong>
                     <span>${o.dateBr}${o.notes ? ` • ${o.notes}` : ""}</span>
                   </div>
                 </div>
                 <div class="feed-right">
-                  <strong class="mono" style="color:#38bdf8;">${ev.deltaKm > 0 ? `+${ev.deltaKm.toLocaleString("pt-BR")} km` : "Marcação"}</strong>
-                  <span class="pay-tag pay-cred" onclick="event.stopPropagation(); deleteOdoMarker(${o.id});">✕ Excluir</span>
+                  <strong class="mono" style="color:var(--sky);">${ev.deltaKm > 0 ? `+${fmtInt(ev.deltaKm)} km` : "Marcação"}</strong>
+                  <button type="button" class="del-pill" onclick="event.stopPropagation(); deleteOdoMarker(${o.id});">✕</button>
                 </div>
-              </div>
-            `;
-          } else if (ev.kind === "FUEL") {
-            const r = ev.item;
-            return `
-              <div class="feed-item" onclick="editFuel(${r.id})">
+              </div>`;
+            } else if (ev.kind === "FUEL") {
+              const r = ev.item;
+              return `<div class="feed-item" onclick="editFuel(${r.id})">
                 <div class="feed-left">
                   <div class="feed-ico fuel">⛽</div>
                   <div class="feed-info">
                     <strong>${r.fuelType}</strong>
-                    <span>${r.dateBr} • ${Number(r.odometerKm).toLocaleString("pt-BR")} km${dTag}</span>
+                    <span>${r.dateBr} • ${fmtInt(r.odometerKm)} km${dTag}</span>
                   </div>
                 </div>
                 <div class="feed-right">
                   <strong class="mono">R$ ${fmtMoney(r.totalAmountPaid)}</strong>
                   <span class="pay-tag ${payTagClass(r.paymentMethod)}">${r.paymentMethod}</span>
                 </div>
-              </div>
-            `;
-          } else {
-            const m = ev.item;
-            const tot = Number(m.partCost || 0) + Number(m.laborCost || 0);
-            return `
-              <div class="feed-item" onclick="editMaint(${m.id})">
+              </div>`;
+            } else {
+              const m = ev.item;
+              const tot = Number(m.partCost || 0) + Number(m.laborCost || 0);
+              return `<div class="feed-item" onclick="editMaint(${m.id})">
                 <div class="feed-left">
                   <div class="feed-ico maint">🔧</div>
                   <div class="feed-info">
                     <strong>${m.partName}</strong>
-                    <span>${m.dateBr} • ${Number(m.odometerKm || 0).toLocaleString("pt-BR")} km${dTag}</span>
+                    <span>${m.dateBr} • ${fmtInt(m.odometerKm || 0)} km${dTag}</span>
                   </div>
                 </div>
                 <div class="feed-right">
                   <strong class="mono">R$ ${fmtMoney(tot)}</strong>
                   <span class="pay-tag ${payTagClass(m.paymentMethod)}">${m.paymentMethod}</span>
                 </div>
-              </div>
-            `;
-          }
-        }).join("");
-      }
+              </div>`;
+            }
+          }).join("");
     }
 
     function evaluateRide() {
-      const price = parseFloat(document.getElementById("simPrice").value) || 0;
-      const totKm = Math.max(0.1, parseFloat(document.getElementById("simTripKm").value) || 1);
-      const mins = Math.max(1, parseFloat(document.getElementById("simTotalMin").value) || 1);
-      const cKm = parseFloat(document.getElementById("thCostKm").value) || 0.75;
+      const price = parseFloat($("simPrice").value) || 0;
+      const totKm = Math.max(0.1, parseFloat($("simTripKm").value) || 1);
+      const mins = Math.max(1, parseFloat($("simTotalMin").value) || 1);
+      const cKm = parseFloat($("thCostKm").value) || 0.75;
 
       const rKm = price / totKm;
       const rHr = (price / mins) * 60;
       const net = price - (totKm * cKm);
 
-      let label = "RECUSAR CORRIDA";
-      let col = "#ef4444";
-      if (rKm >= 2.0 && rHr >= 40) {
-        label = "VALE A PENA ACEITAR";
-        col = "#10b981";
-      } else if (rKm >= 1.5) {
-        label = "AVALIAR (MÉDIA)";
-        col = "#f59e0b";
-      }
+      let label = "RECUSAR CORRIDA", col = "#ef4444";
+      if (rKm >= 2.0 && rHr >= 40) { label = "VALE A PENA ACEITAR"; col = "#10b981"; }
+      else if (rKm >= 1.5) { label = "AVALIAR (MÉDIA)"; col = "#f59e0b"; }
 
-      document.getElementById("semResultCard").style.borderColor = col;
-      document.getElementById("semOrb").style.background = col;
-      document.getElementById("semVerdict").style.color = col;
-      document.getElementById("semVerdict").textContent = label;
-      document.getElementById("semNumbers").textContent = `R$ ${fmtMoney(rKm)}/km • R$ ${Math.round(rHr)}/h`;
-      document.getElementById("semProfit").textContent = `Lucro livre (descontando o Argo): R$ ${fmtMoney(net)}`;
+      $("semResultCard").style.borderColor = col;
+      $("semOrb").style.background = col;
+      $("semVerdict").style.color = col;
+      $("semVerdict").textContent = label;
+      $("semNumbers").textContent = `R$ ${fmtMoney(rKm)}/km • R$ ${Math.round(rHr)}/h`;
+      $("semProfit").textContent = `Lucro livre (descontando o Argo): R$ ${fmtMoney(net)}`;
     }
 
     function exportToExcelCsv() {
       let csv = "\uFEFF=== HISTORICO DE QUILOMETRAGEM ===\nData;Quilometragem (km);Momento/Tipo;Observacao\n";
-      odoRecords.forEach(o => {
-        csv += `${o.dateBr};${o.odometerKm};${o.markerType || "Odômetro"};${o.notes || ""}\n`;
-      });
+      odoRecords.forEach(o => { csv += `${o.dateBr};${o.odometerKm};${o.markerType || "Odômetro"};${o.notes || ""}\n`; });
       csv += "\n=== ABASTECIMENTOS ===\nData;Km;Valor (R$);Combustivel;Preco/L;Litros;Pagamento;Posto\n";
       fuelRecords.forEach(r => {
-        const lit = (r.totalAmountPaid / r.pricePerLiter).toFixed(2).replace(".", ",");
+        const lit = (r.totalAmountPaid / Math.max(0.01, r.pricePerLiter)).toFixed(2).replace(".", ",");
         csv += `${r.dateBr};${r.odometerKm};${String(r.totalAmountPaid).replace(".", ",")};${r.fuelType};${String(r.pricePerLiter).replace(".", ",")};${lit};${r.paymentMethod};${r.stationName || ""}\n`;
       });
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -2142,9 +1969,9 @@
       a.click();
     }
 
-    document.getElementById("inFuelDate").value = todayIso();
-    document.getElementById("inMaintDate").value = todayIso();
-    document.getElementById("inOdoMarkerDate").value = todayIso();
+    $("inFuelDate").value = todayIso();
+    $("inMaintDate").value = todayIso();
+    $("inOdoMarkerDate").value = todayIso();
     initAuth();
   </script>
 </body>
